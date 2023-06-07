@@ -1,0 +1,75 @@
+
+{% extends 'base.html' %}
+{% block title %}Login{% endblock title%}
+
+{% block content %} 
+<div class="container shadow bg-white col-3 mt-5 rounded p-3">
+
+    <div class="text-center alert alert-info" role="alert" id="msg" style="display: none;">
+        
+    </div>
+    <form >
+        {% csrf_token %}
+        <h1 class="h3 mb-3 fw-normal">Please Signup here</h1>
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Username..">
+        </div>
+        <div class="mb-1">
+            <label for="phone" class="form-label d-flex justify-content-between">
+                <span>Phone</span>
+                <span onclick="getOTP()" style="cursor: pointer;">Get OTP</span>
+            </label>
+            <input type="text" class="form-control" id="phone" name="phone" placeholder="Mobile number..">
+        </div>
+        <div class="mb-3" style="display: none;" id="otpblock">
+            <label for="otp" class="form-label">OTP</label>
+            <input type="text" class="form-control" id="otp" name="otp" placeholder="OTP..">
+        </div>
+    
+        <span class="btn btn-dark w-100 py-2 mt-2" id="signup" style="display: none;" onclick="verifyOtp('signup')">Sign Up</span>
+        <a class="d-flex justify-content-end" href="{% url 'login' %}">Login</a>
+    </form>
+
+</div>
+
+<script>
+
+    function getOTP(){
+        const phonRegEx = /^\d{10}$/
+        var phone = document.getElementById('phone').value;
+        var username = document.getElementById("username").value
+        if(phonRegEx.test(phone)){
+            alert("Please enter valid mobile number!")
+        } else {
+            $.ajax({
+                url: '/register/',
+                type: 'POST',
+                data: {
+                    'phone' : phone,
+                    'username' : username,
+                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(response){
+                    console.log("success==================>>>>>>>>>>>>>>>>>>>",response.msg)
+                    if (response.msg === 'User already exists!'){
+                        var msgblock = document.getElementById("msg")
+                        var msg1 = document.createElement('h5')
+                        msg1.textContent = response.msg
+                        msgblock.appendChild(msg1)
+                        document.getElementById("msg").style.display = 'block'
+                        
+                    } else {
+                        document.getElementById("otpblock").style.display = 'block'
+                        document.getElementById("signup").style.display = 'block'
+                    }
+                },
+                error: function(error){
+                    console.log(error,"=========>>>>error")
+                }
+            })
+        }
+    }
+
+</script>
+{% endblock content%}

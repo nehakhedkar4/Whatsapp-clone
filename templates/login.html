@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock title%}
+
+{% block content %} 
+
+<div class="container shadow bg-white col-3 mt-5 rounded p-3">
+    <div class="text-center alert alert-info" role="alert" id="msg" style="display: none;">
+        
+    </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="d-flex justify-content-between">
+            <h3 class="h3 mb-3 fw-normal">Please Login</h3>
+            <a  href="{% url 'register' %}">Sign up</a>
+        </div>
+        
+        
+            <div class="">
+                <label for="tx" class="form-label">Phone</label>
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="Mobile number...">
+                <small class="d-flex justify-content-end mt-2" style="cursor: pointer;" onclick="login()">Get OTP</small>
+            </div>
+    
+        <!-- <button class="btn btn-dark w-100 py-2 mt-2" type="submit">Login</button> -->
+        <div class="mb-3" style="display: none;" id="otpblock">
+            <label for="otp" class="form-label">OTP</label>
+            <input type="text" class="form-control" id="otp" name="otp" placeholder="OTP..">
+        </div>
+    
+        <span class="btn btn-dark w-100 py-2 mt-2" id="login" style="display: none;" onclick="verifyOtp('login')">Login</span>
+        
+    </form>
+
+</div>
+
+<script>
+    function login(){
+        const phonRegEx = /^\d{10}$/
+        var phone = document.getElementById('phone').value;
+        console.log(phone)
+        console.log(phonRegEx.test(phone))
+        if(!phonRegEx.test(phone)){
+            alert("Please enter valid mobile number!")
+        } else {
+            $.ajax({
+                url: '/login/',
+                type: 'POST',
+                data: {
+                    'phone': phone,
+                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(){
+                    console.log("success")
+                    document.getElementById("otpblock").style.display = 'block'
+                    document.getElementById("login").style.display = 'block'
+                },
+                error: function(error) {
+                    console.log("error: ",error)
+                }
+            })
+        }
+    }
+</script>
+{% endblock content%}
