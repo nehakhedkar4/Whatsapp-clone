@@ -28,7 +28,7 @@ function verifyOtp(value){
             }
         },
         error: function(error){
-            console.log(error,"=========>>>>error")
+            console.log("error: ",error)
         }
     })
 }
