@@ -28,29 +28,29 @@
                         </div>
                             
                         <div class="shadow bg-white" style="height: 35.5rem;">
-                            <div class="card rounded-0 border-top-0 border-start-0 border-end-0" style="max-width: 540px;">
-                                <div class="row g-0">
-                                  <div class="col-md-2">
-                                        <!-- <div class="text-white profile">
-                                            <span class="">NK</span>
-                                        </div> -->
-                                    <img src="{% static 'images/whatsapp1.png' %}" class="img-fluid rounded-start m-3" alt="...">
-                                  </div>
-                                  <div class="col-md-8">
-                                    <div class="card-body">
-                                      <h5 class="card-title" style="font-family: auto;">Card title</h5>
-                                      <p class="card-text" style="font-family: sans-serif;"><small class="text-muted">Last updated 3 mins ago</small></p>
+                            {% if messages %}
+                                {% for i in messages %}
+                                <div class="card rounded-0 border-top-0 border-start-0 border-end-0" style="max-width: 540px;">
+                                    <div class="row g-0">
+                                    <div class="col-md-2">
+                                        <img src="{% static 'images/whatsapp1.png' %}" class="img-fluid rounded-start m-3" alt="...">
                                     </div>
-                                  </div>
+                                    <div class="col-md-8">
+                                        <div class="card-body">
+                                        <h5 class="card-title" style="font-family: auto;">{{i.room}}</h5>
+                                        <p class="card-text" style="font-family: sans-serif;"><small class="text-muted">3 mins ago {{i.updated_at}}</small></p>
+                                        </div>
+                                    </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="card rounded-0 border-top-0 border-start-0 border-end-0" style="max-width: 540px;">
+                                {% endfor %}
+                            {% endif %}
+                            <!-- <div class="card rounded-0 border-top-0 border-start-0 border-end-0" style="max-width: 540px;">
                                 <div class="row g-0">
                                   <div class="col-md-2">
                                     <div class="text-white profile m-3">
                                         <span class="">NK</span>
                                     </div>
-                                    <!-- <img src="..." class="img-fluid rounded-start" alt="..."> -->
                                   </div>
                                   <div class="col-md-8">
                                     <div class="card-body">
@@ -59,7 +59,7 @@
                                     </div>
                                   </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
         

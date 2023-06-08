@@ -73,4 +73,5 @@ def verifyOtp(request):
             return JsonResponse({'msg' : 'Invalid OTP!'}) 
 
 def chatfunct(request):
-    return render(request,'chat.html')
+    messages = Messages.objects.all().order_by('-created_at')
+    return render(request,'chat.html',{'messages' : messages})
