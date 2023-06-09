@@ -6,6 +6,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('chat/',views.chatfunct),
     path('',views.login, name='login'),
+    path('logout/',views.logout, name='logout'),
     path('register/',views.register, name='register'),
     path('verifyOtp/',views.verifyOtp, name='verifyOtp'),
 

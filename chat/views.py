@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.contrib import messages
 import datetime
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 
 load_dotenv()
 
@@ -21,26 +22,43 @@ def send_otp_phone(phone):
     account_sid = os.getenv("TWILIO_ACCOUNT_SID")     
     auth_token = os.getenv("TWILIO_TOKEN")       
 
-    client = Client(account_sid, auth_token)
-    message = client.messages \
-                    .create(
-                        body=f"Your verification code is: {otp}",
-                        from_= os.getenv("TWILIO_PHONE"),           
-                        to= f'+91{phone}',
-                        # to='+918758691652'
-                    )
-    user = MyUser.objects.get(phone=phone)
-    user.created_at = timezone.now()
-    user.otp = otp
-    user.save()
-    return phone
+    try:
+        user = MyUser.objects.get(phone=phone)
+        client = Client(account_sid, auth_token)
+        message = client.messages \
+                        .create(
+                            body=f"Your verification code is: {otp}",
+                            from_= os.getenv("TWILIO_PHONE"),           
+                            to= f'+91{phone}',
+                            # to='+918758691652'
+                        )
+        
+        user.created_at = timezone.now()
+        user.otp = otp
+        user.save()
+        return True
+    
+    except MyUser.DoesNotExist:
+        print("-=======================except")
+        return False
+    
 
 # LOGIN 
 def login(request):
-    if request.method == 'POST':
+    if request.method == 'POST':        
         phone = request.POST.get('phone')
-        send_otp_phone(phone)
+        try:
+            user = MyUser.objects.get(phone=phone)
+            send_otp_phone(phone)   
+            request.session['user'] = phone 
+            return JsonResponse({'status' : 200})
+        except MyUser.DoesNotExist:
+            return JsonResponse({'msg' : "User Doesn't exists!", 'status' : 400}) 
     return render(request, 'login.html')
+
+def logout(request):
+    del request.session['user']
+    return redirect('/')
 
 def register(request):
     if request.method == 'POST':
@@ -72,6 +90,31 @@ def verifyOtp(request):
         else:
             return JsonResponse({'msg' : 'Invalid OTP!'}) 
 
+
 def chatfunct(request):
-    messages = Messages.objects.all().order_by('-created_at')
-    return render(request,'chat.html',{'messages' : messages})
+
+    if request.method == 'POST':
+
+        img = request.FILES.get('img')
+        user_id = request.POST.get('user_id')
+        
+        if img and user_id:
+            user = MyUser.objects.get(id=user_id)
+            user.profile_picture = img
+            # user.profile_picture.save(img.name, img)
+            user.save()
+            print(user.profile_picture.url,"================url")
+            image_url = user.profile_picture.url
+            return JsonResponse({'image_url' : image_url})
+
+        return redirect('/chat/')
+
+    print('user' in request.session,"================condition")
+    if 'user' in request.session:
+        print("iffffff")
+        users = MyUser.objects.all().order_by('-created_at')
+        return render(request,'chat.html',{'users' : users})
+    else:
+        print("else")
+        return redirect('/')
+    

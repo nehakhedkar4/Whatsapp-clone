@@ -30,7 +30,7 @@ class MyUser(AbstractBaseUser):
     username = models.CharField(max_length=255)
     otp = models.CharField(max_length=6,blank=True, null=True)
     is_verified = models.BooleanField(default=False)
-    profile_picture = models.ImageField(upload_to='profile_picture',null=True)
+    profile_picture = models.ImageField(upload_to='profile_picture',null=True,blank=True)
 
     is_admin = models.BooleanField(default=False)
 
@@ -45,48 +45,33 @@ class MyUser(AbstractBaseUser):
     def __str__(self):
         return self.phone
     
-    def has_perm(self, perm, obj=None):
-        "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-        return True
 
-    def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
-        # Simplest possible answer: Yes, always
-        return True
+# class PrivateChat(models.Model):
+#     first_user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+#     second_user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
 
-    @property
-    def is_staff(self):
-        "Is the user a member of staff?"
-        # Simplest possible answer: All admins are staff
-        return self.is_admin
+#     class Meta:
+#         unique_together = ['first_user','seocnd_user']
+#         contarints = [models.CheckConstraint(check=Q(first_user__id__lt=F('second_user__id')), name='unique_user_pair'),]
 
-class PrivateChat(models.Model):
-    first_user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    second_user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+# class Messages(models.Model):
+#     room = models.ForeignKey(PrivateChat, on_delete=models.CASCADE)
+#     messages = models.TextField()
+#     sender = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+#     receiver = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        unique_together = ['first_user','seocnd_user']
-        contarints = [models.CheckConstraint(check=Q(first_user__id__lt=F('second_user__id')), name='unique_user_pair'),]
-
-class Messages(models.Model):
-    room = models.ForeignKey(PrivateChat, on_delete=models.CASCADE)
-    messages = models.TextField()
-    sender = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    receiver = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        constraints = [
-            models.CheckConstraint(
-                check=Q(sender=F('privatechat__first_user') & Q(receiver=F('privatechat__second_user')))
-                    | Q(sender=F('privatechat__second_user') & Q(receiver=F('privatechat__first_user'))), 
-                name='valid_sender_and_receiver'
-            ),
-        ]
+    # class Meta:
+    #     constraints = [
+    #         models.CheckConstraint(
+    #             check=Q(sender=F('privatechat__first_user') & Q(receiver=F('privatechat__second_user')))
+    #                 | Q(sender=F('privatechat__second_user') & Q(receiver=F('privatechat__first_user'))), 
+    #             name='valid_sender_and_receiver'
+    #         ),
+    #     ]
     
 
 
