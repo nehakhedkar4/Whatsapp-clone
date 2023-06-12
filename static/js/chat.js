@@ -1,45 +1,41 @@
 console.log("chat.js loaded")
 
 var userCards = document.querySelectorAll("#user-card")
-console.log(userCards,"======>>.user")
 userCards.forEach(function(card){
-    console.log(card,"=>>>carddd")
     card.addEventListener('click', function (){
+
+        // Hide the default block
+        document.querySelector('.col-8').classList.add('d-none');
+        // Show the selected user block
+        document.getElementById('selectedUserBlock').classList.remove('d-none');
+
         var username = card.querySelector('.card-title').textContent
         var profile_img = card.querySelector('.profile_img')
-        console.log(username,"==========================username")
-        console.log(profile_img,"==========================profile_img",profile_img.tagName, username[0])
 
-        var selectedUserBlock = document.getElementById("selectedUserBlock")
-        selectedUserBlock.querySelector("#usernameR").textContent = username
-        console.log(selectedUserBlock.querySelector("#profileReceiver"),"MMMMMMMMMMMM")
+        document.getElementById('usernameReceiver').textContent = username
 
-        if (profile_img.tagName === 'IMG'){
-           console.log( profile_img.getAttribute('src'))
-           selectedUserBlock.querySelector('#imgProfileR').setAttribute('src', profile_img.getAttribute('src'))
-           selectedUserBlock.querySelector('#imgProfileR').style.display = 'block'
+        if (profile_img.tagName === 'IMG') {
+            console.log("if block") 
+            var imgProfile_Receiver = document.getElementById('imgProfileR')
+            imgProfile_Receiver.setAttribute('src', profile_img.getAttribute('src'))
+            imgProfile_Receiver.style.display = 'block'
+            document.getElementById('profileReceiver').style.display = 'none'
         } else {
-            var p = selectedUserBlock.querySelector("#profileReceiver")
-            var ele = document.createElement('span') 
-            ele.textContent = username[0]
-            p.appendChild()
-            p.style.display = 'block'
+            console.log("else block")
+            document.getElementById('customProfile').textContent = username[0]
+            document.getElementById('profileReceiver').style.display = 'block'
+            document.getElementById('imgProfileR').style.display = 'none' 
         }
-
     })
 })
 
+// Websocket
+let input_message = document.getElementById('input-message')
 
-function selectUser(){
-    console.log("clicked to user card")
-    var selectedUserBlock = document.getElementById("selectedUserBlock")
-    
+var ws = 'ws://' + window.location.host + '/ws/async/'
+console.log(ws)
 
 
-
-    // console.log(user.getElementsByClassName('.card-title'),"======>>.user.find('.)")
-    // console.log(selectedUserBlock,"======>>.selectedUserBlock")
-}
 
 function verifyOtp(value){
     console.log(value)

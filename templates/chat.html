@@ -74,22 +74,38 @@
             </div>
         </div>
 
-        <!-- <div class="col-8 p-0">
 
-        </div> -->
+        <div class="col-8 p-0" style="background-color: #f0f2f5;">
+            <div class="d-flex justify-content-center align-items-center flex-column text-center text-secondary" style="font-family: sans-serif;">
+                <img src="{% static 'images/Empty_Page.png' %}" alt="" class="w-50" style="margin: 10rem 0rem 2rem 0rem;">
 
-        <div class="col-8 p-0" id="selectedUserBlock">
-            <div class="p-3" style="background-color: #f0f2f5;">
+                <div class="">
+                    <h2>WhatsApp Web</h2>
+                </div>
+                <div class="firstImgblock d-flex flex-column mt-1">
+                    <span>Send and receive messages without keeping your phone online.</span>
+                    <span>Use WhatsApp on up to 4 linked devices and 1 phone at the same time.</span>
+                </div>
+                <div class="mt-5 encrypted">
+                    <span><i class="fa-solid fa-lock"></i></span>
+                    <span>End-to-end encrypted</span>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-8 p-0 d-none" id="selectedUserBlock">
+            <div style="background-color: #f0f2f5; padding: 0.8rem;">
                 <div class="d-flex">
                     <div class="flex-grow-1 d-flex">
 
-                        <img id="imgProfileR" src="" class="profile_img m-3" alt="..." style="display: none;">
+                        <img id="imgProfileR" src="" class="profile_img" alt="..." style="display: none;">
                         <div class="text-white profile" id="profileReceiver" style="display: none;">
-                            <span class="">N</span>
+                            <span id="customProfile"></span>
                         </div>
                         
 
-                        <div class="m-3 fw-bold" id="usernameR">Neha</div>
+                        <div class="m-3 fw-bold" id="usernameReceiver"></div>
                     </div>
                     <div class="p-2">
                         <span class="px-2"><i class="fa-solid fa-magnifying-glass"></i></span>
@@ -97,7 +113,7 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2" style="background-color: #f7ebe1; height: 34.2rem; overflow-y: scroll; overflow-x: scroll; font-family: auto;">
+            <div class="p-2" style="background-color: #f7ebe1; height: 34.6rem; overflow-y: scroll; overflow-x: scroll; font-family: auto;">
                 <div class="p-2">
                     <span>Mansi</span>
                 </div>
@@ -116,7 +132,7 @@
             <div class="p-3 border d-flex" style="background-color: #f0f2f5;">
                 <i class=" fa-regular fa-face-smile mx-1 me-3 mt-2" style="cursor: pointer;"></i>
                 <i class=" fa-solid fa-paperclip me-3 mt-2" style="cursor: pointer;"></i>
-                <input type="text" class="form-control border" placeholder="Type a Message.." style="font-family: sans-serif;">
+                <input type="text" class="form-control border" placeholder="Type a Message.." style="font-family: sans-serif;" id="input-message">
                 <i class="fa-regular fa-paper-plane mx-1 mt-2 ms-3" style="cursor: pointer;"></i>
             </div>
         </div>
