@@ -41,7 +41,6 @@ userCards.forEach(function(card){
 
         // Websocket connection
         ws = new WebSocket('ws://' + window.location.host + '/ws/async/' + user1_id + '/' + user2_id) 
-        // console.log(ws,":ws")
 
         ws.onopen = function(){
             console.log("Connected")
@@ -64,14 +63,11 @@ userCards.forEach(function(card){
             var msg_body = document.querySelector('.message-body')
 
             if (data.sent_by === user1_id){
-                // var msg_body_sent_by = document.querySelector('.message-container_sender')
-                // var msg_body_send_to = document.getElementsByClassName('message-container_receiver')
                 
                 var message_ele = `<div class="d-flex flex-column align-items-end mt-2">
                                         <span class="p-2 px-3 m-1" style="border-radius: 17px; background-color: #C5E6A1;">${data.message} </span>
                                     <div/>`
 
-                // var message_ele = `<span class="p-2 px-3 m-1" style="border-radius: 17px; background-color: #C5E6A1;">${data.message} </span>`
                 msg_body.innerHTML += message_ele
             } else {
 
@@ -79,84 +75,27 @@ userCards.forEach(function(card){
                                         <span class="bg-white p-2 px-3 mt-1" style="border-radius: 17px;">${data.message} </span>
                                     <div/>`
 
-                // var message_ele = `<span class="p-2 px-3 m-1" style="border-radius: 17px; background-color: #C5E6A1;">${data.message} </span>`
                 msg_body.innerHTML += message_ele
-
-                // <div class="d-flex flex-column align-items-start message-container_receiver mt-2">
-
-                // var msg_body_sent_by = document.querySelector('.message-container_sender')
-                // var msg_body_send_to = document.querySelector('.message-container_receiver')
-                // var message_ele = `<span class="bg-white p-2 px-3 mt-1" style="border-radius: 17px;">${data.message} </span>`
-                // msg_body_send_to.innerHTML += message_ele
             }
 
         }
     })
 })
-// ws.onopen = function(){
-//     console.log("Connected")
-// }
-
-// ws.onerror = function(e){
-//     console.log("Error :",e)
-// }
-
-// ws.onclose = function(){
-//     console.log("Disconnected")
-// }
-
-// ws.onmessage = function(e){
-//     console.log("Message from Server: ",e.data)
-
-//     data = JSON.parse(e.data)
-// }
 
 function msg_send(){
     console.log("click to send")
+    console.log("user1: ",user1_id)
+    console.log("user2: ",user2_id)
     
     ws.send(JSON.stringify({
         'message' : input_message.value,
-        'sent_by' : user1_id
+        'sent_by' : user1_id,
+        // 'send_by' : user2_id,
     }))
     input_message.value = ""
     
     console.log("data: ", data)
 }
-
-// ws.onmessage = function(e){
-//     console.log("Message from Server: ",e.data)
-
-//     var data = JSON.parse(e.data)
-
-//     // var msg_body_sent_by = document.querySelector('.message-container_sender')
-//     // var msg_body_send_to = document.getElementsByClassName('message-container_receiver')
-//     // // console.log(msg_body_sent_by)
-//     // var message_ele = `<span class="p-2 px-3" style="border-radius: 17px; background-color: #C5E6A1;">${data.message} </span>`
-//     // msg_body_sent_by.innerHTML += message_ele
-//     // console.log(msg_body_sent_by.getAttribute('chat_id'))
-
-//     // var message_ele = document.createElement('span');
-//     // message_ele.classList.add('p-2', 'px-3');
-//     // message_ele.style.borderRadius = '17px';
-//     // message_ele.style.backgroundColor = '#C5E6A1';
-//     // message_ele.textContent = data.message;
-//     // msg_body_sent_by.appendChild(message_ele);
-
-//     // msg_body_sent_by.appendChild(message_ele)
-
-//     // if (msg_body_sent_by.getAttribute('chat_id') === user) {
-//     //     console.log("if block")
-//     // } else {
-//     //     console.log("else")
-//     // }
-
-
-//     // console.log(document.getElementById('msg_content'),"===================msg_content",e.data)
-//     // console.log(data.message,"=============data")
-//     // document.getElementById("msg_content").textContent = data.message
-// }
-
-
 
 function verifyOtp(value){
     console.log(value)

@@ -49,32 +49,19 @@ class MyUser(AbstractBaseUser):
 # class PrivateChat(models.Model):
 #     first_user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
 #     second_user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-#     messages = models.TextField()
 #     created_at = models.DateTimeField(auto_now_add=True)
 #     updated_at = models.DateTimeField(auto_now=True)
 
 #     class Meta:
 #         unique_together = ['first_user','seocnd_user']
-#         contarints = [models.CheckConstraint(check=Q(first_user__id__lt=F('second_user__id')), name='unique_user_pair'),]
 
-# class Messages(models.Model):
-#     room = models.ForeignKey(PrivateChat, on_delete=models.CASCADE)
-#     messages = models.TextField()
-#     sender = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-#     receiver = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+
+# class ChatMessage(models.Model):
+#     thread = models.ForeignKey(PrivateChat, on_delete=models.CASCADE, null=True, blank=True, related_name='chat_messages')
+#     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+#     message = models.TextField()
 #     created_at = models.DateTimeField(auto_now_add=True)
 #     updated_at = models.DateTimeField(auto_now=True)
-
-    # class Meta:
-    #     constraints = [
-    #         models.CheckConstraint(
-    #             check=Q(sender=F('privatechat__first_user') & Q(receiver=F('privatechat__second_user')))
-    #                 | Q(sender=F('privatechat__second_user') & Q(receiver=F('privatechat__first_user'))), 
-    #             name='valid_sender_and_receiver'
-    #         ),
-    #     ]
-    
-
 
 
 # class Chat(models.Model):
