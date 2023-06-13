@@ -25,13 +25,16 @@ def send_otp_phone(phone):
     try:
         user = MyUser.objects.get(phone=phone)
         client = Client(account_sid, auth_token)
-        message = client.messages \
-                        .create(
-                            body=f"Your verification code is: {otp}",
-                            from_= os.getenv("TWILIO_PHONE"),           
-                            to= f'+91{phone}',
-                            # to='+918758691652'
-                        )
+        try:
+            message = client.messages \
+                            .create(
+                                body=f"Your verification code is: {otp}",
+                                from_= os.getenv("TWILIO_PHONE"),           
+                                to= f'+91{phone}',
+                                # to='+918758691652'
+                            )
+        except:
+            pass
         
         user.created_at = timezone.now()
         user.otp = otp
@@ -103,18 +106,15 @@ def chatfunct(request):
             user.profile_picture = img
             # user.profile_picture.save(img.name, img)
             user.save()
-            print(user.profile_picture.url,"================url")
             image_url = user.profile_picture.url
             return JsonResponse({'image_url' : image_url})
 
         return redirect('/chat/')
 
-    print('user' in request.session,"================condition")
     if 'user' in request.session:
-        print("iffffff")
         users = MyUser.objects.all().order_by('-created_at')
-        return render(request,'chat.html',{'users' : users})
+        user = MyUser.objects.get(phone=request.session['user'])
+        return render(request,'chat.html',{'users' : users, 'user' : user })
     else:
-        print("else")
         return redirect('/')
     

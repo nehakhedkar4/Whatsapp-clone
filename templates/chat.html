@@ -6,9 +6,12 @@
 <div class="container-fluid">
     <!-- <div class="" style="height: 10vh; background-color: #00a840;"></div> -->
     <div class="d-flex justify-content-end">
+        <p>Logged in as: {{user.username}}</p>
         <a class="pt-2 pe-3 fs-4" style="font-family: serif; cursor: pointer; color: black;" href="{% url 'logout' %}">Log out</a>
     </div>
 </div>
+
+<input type="hidden" id="user1_id" value="{{user.id}}">
 
 <div class="container">
     <div class="row mt-5">
@@ -53,6 +56,7 @@
                 {% for i in users %}
                     {% if i.phone != request.session.user %}
                     <div class="card rounded-0 border-top-0 border-start-0 border-end-0" style="max-width: 540px;cursor: pointer;" id="user-card" >
+                        <input type="hidden" class="receiver-id" value="{{i.id}}">
                         <div class="row g-0">
                         <div class="col-md-2">
                             {% if i.profile_picture %}
@@ -113,31 +117,27 @@
                     </div>
                 </div>
             </div>
-            <div class="p-2" style="background-color: #f7ebe1; height: 34.6rem; overflow-y: scroll; overflow-x: scroll; font-family: auto;">
-                <div class="p-2">
+            <div class="p-2 message-body" style="background-color: #f7ebe1; height: 34.6rem; overflow-y: scroll; overflow-x: scroll; font-family: auto;">
+                <!-- <div class="p-2">
                     <span>Mansi</span>
-                </div>
-                <div class="">
+                </div> -->
+                <!-- <div class="d-flex flex-column align-items-start message-container_receiver mt-2">
                     <span class="bg-white p-2 px-3" style="border-radius: 17px;">Hello! <span class="text-secondary" style="font-size: small;">06:15 AM</span></span>
                 </div>
-                <div class="d-flex flex-column align-items-end">
-                    <div class="p-2">
-                        <span>You</span>
-                    </div>
-                    <div class="">
-                        <span class="p-2 px-3" style="border-radius: 17px; background-color: #C5E6A1;">How are you! <span class="text-secondary" style="font-size: small;">06:15 AM</span></span>
-                    </div>
-                </div>
+                <div class="d-flex flex-column align-items-end message-container_sender">
+                    <span class="p-2 px-3" style="border-radius: 17px; background-color: #C5E6A1;">How are you! <span class="text-secondary" style="font-size: small;">06:15 AM</span></span>
+                </div> -->
             </div>
             <div class="p-3 border d-flex" style="background-color: #f0f2f5;">
                 <i class=" fa-regular fa-face-smile mx-1 me-3 mt-2" style="cursor: pointer;"></i>
                 <i class=" fa-solid fa-paperclip me-3 mt-2" style="cursor: pointer;"></i>
                 <input type="text" class="form-control border" placeholder="Type a Message.." style="font-family: sans-serif;" id="input-message">
-                <i class="fa-regular fa-paper-plane mx-1 mt-2 ms-3" style="cursor: pointer;"></i>
+                <i class="fa-regular fa-paper-plane mx-1 mt-2 ms-3" style="cursor: pointer;" onclick="msg_send()"></i>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock content %}
 
 <!-- #00a884 -->

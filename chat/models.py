@@ -49,6 +49,7 @@ class MyUser(AbstractBaseUser):
 # class PrivateChat(models.Model):
 #     first_user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
 #     second_user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+#     messages = models.TextField()
 #     created_at = models.DateTimeField(auto_now_add=True)
 #     updated_at = models.DateTimeField(auto_now=True)
 
