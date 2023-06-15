@@ -66,14 +66,14 @@ userCards.forEach(function(card){
                 
                 var message_ele = `<div class="d-flex flex-column align-items-end mt-2">
                                         <span class="p-2 px-3 m-1" style="border-radius: 17px; background-color: #C5E6A1;">${data.message} </span>
-                                    <div/>`
+                                    </div>`
 
                 msg_body.innerHTML += message_ele
             } else {
 
                 var message_ele = `<div class="d-flex flex-column align-items-start mt-2">
                                         <span class="bg-white p-2 px-3 mt-1" style="border-radius: 17px;">${data.message} </span>
-                                    <div/>`
+                                    </div>`
 
                 msg_body.innerHTML += message_ele
             }
@@ -90,7 +90,7 @@ function msg_send(){
     ws.send(JSON.stringify({
         'message' : input_message.value,
         'sent_by' : user1_id,
-        // 'send_by' : user2_id,
+        'send_to' : user2_id,
     }))
     input_message.value = ""
     

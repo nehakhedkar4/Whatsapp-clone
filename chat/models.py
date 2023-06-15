@@ -46,22 +46,22 @@ class MyUser(AbstractBaseUser):
         return self.phone
     
 
-# class PrivateChat(models.Model):
-#     first_user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-#     second_user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
+class Thread(models.Model):
+    first_user = models.ForeignKey(MyUser, on_delete=models.CASCADE,null=True, blank=True, related_name='thread_first_user')
+    second_user = models.ForeignKey(MyUser, on_delete=models.CASCADE,null=True, blank=True, related_name='thread_second_user')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-#     class Meta:
-#         unique_together = ['first_user','seocnd_user']
+    class Meta:
+        unique_together = ['first_user','second_user']
 
 
-# class ChatMessage(models.Model):
-#     thread = models.ForeignKey(PrivateChat, on_delete=models.CASCADE, null=True, blank=True, related_name='chat_messages')
-#     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-#     message = models.TextField()
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
+class ChatMessage(models.Model):
+    thread = models.ForeignKey(Thread, on_delete=models.CASCADE, null=True, blank=True, related_name='chat_messages')
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 # class Chat(models.Model):

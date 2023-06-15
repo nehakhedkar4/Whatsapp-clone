@@ -112,9 +112,26 @@ def chatfunct(request):
         return redirect('/chat/')
 
     if 'user' in request.session:
+
+        print(type(request.session['user']),"====================================")
+
         users = MyUser.objects.all().order_by('-created_at')
         user = MyUser.objects.get(phone=request.session['user'])
-        return render(request,'chat.html',{'users' : users, 'user' : user })
+        threads = Thread.objects.filter(first_user=14).prefetch_related('chat_messages').order_by('-created_at')
+        return render(request,'chat.html',{'users' : users, 'user' : user, 'threads' : threads })
     else:
         return redirect('/')
-    
+
+print()
+print()
+threads = Thread.objects.filter(first_user=14).prefetch_related('chat_messages').order_by('-created_at')
+print(threads)
+for i in threads:
+    print(i.chat_messages.all())
+    for j in i.chat_messages.all():
+        print(j.message)
+       
+# print(ChatMessage.objects.filter(user=14))
+# for i in ChatMessage.objects.filter(user=14):
+#     print(i)
+print()
