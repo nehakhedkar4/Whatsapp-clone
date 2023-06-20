@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Chat{% endblock title%}
+{% block content %} 
+
+    {% if chat_user %}
+
+    <input type="hidden" id="second-user" value="{{chat_user.id}}">
+
+    <!-- CHAT CONVERSION -->
+    <div class="col-8 p-0" id="chat-conversion-block">
+        <div style="background-color: #f0f2f5; padding: 0.8rem;">
+            
+            <div class="d-flex">                    
+                
+                <div class="flex-grow-1 d-flex">
+                    {% if chat_user.profile_picture %}
+                    <img id="second_user_ImgProfile" src="{{ chat_user.profile_picture.url }}" class="profile_img" alt="...">
+                    {% else %}
+                    <div class="text-white profile" id="second_user_profile_custom" >
+                        <span id="customProfile">{{ chat_user.username.0 }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="m-3 fw-bold" id="second_user_username">{{chat_user.username}}</div> 
+                </div>
+                <div class="p-2">
+                    <span class="px-2"><i class="fa-solid fa-magnifying-glass"></i></span>
+                    <span class="px-2"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="p-2 message-body" style="background-color: #f7ebe1; height: 34.6rem; overflow-y: scroll; overflow-x: scroll; font-family: auto;">            
+        {% if chat_messages %}
+           {% for chat in chat_messages %}
+
+                {% if chat.user.id == logged_in_user.id %}
+                            
+                    <div class="d-flex flex-column align-items-end message-container_receiver mt-2">
+                        <span class="p-2 px-3 m-1" style="border-radius: 17px; background-color: #C5E6A1;">{{ chat.message }}</span>
+                    </div>
+                                        
+                {% elif chat.user.id == chat_user.id %}
+                                            
+                    <div class="d-flex flex-column align-items-start mt-2">
+                        <span class="bg-white p-2 px-3 mt-1" style="border-radius: 17px;">{{ chat.message }}</span>
+                    </div>
+                                            
+                {% endif %}
+
+           {% endfor %}
+        {% endif %}
+        </div>
+        <div class="p-3 border d-flex" style="background-color: #f0f2f5;">
+            <i class=" fa-regular fa-face-smile mx-1 me-3 mt-2" style="cursor: pointer;"></i>
+            <i class=" fa-solid fa-paperclip me-3 mt-2" style="cursor: pointer;"></i>
+            <input type="text" class="form-control border" placeholder="Type a Message.." style="font-family: sans-serif;" id="input-message">
+            <i class="fa-regular fa-paper-plane mx-1 mt-2 ms-3" style="cursor: pointer;" onclick="msg_send()"></i>
+        </div>
+    </div>
+
+    {% else %}
+
+        <!-- DEFAULT BLOCK -->
+        <div class="col-8 p-0" style="background-color: #f0f2f5;" id="default-block">
+            <div class="d-flex justify-content-center align-items-center flex-column text-center text-secondary" style="font-family: sans-serif;">
+                <img src="{% static 'images/Empty_Page.png' %}" alt="" class="w-50" style="margin: 10rem 0rem 2rem 0rem;">
+    
+                <div class="">
+                    <h2>WhatsApp Web</h2>
+                </div>
+                <div class="firstImgblock d-flex flex-column mt-1">
+                    <span>Send and receive messages without keeping your phone online.</span>
+                    <span>Use WhatsApp on up to 4 linked devices and 1 phone at the same time.</span>
+                </div>
+                <div class="mt-5 encrypted">
+                    <span><i class="fa-solid fa-lock"></i></span>
+                    <span>End-to-end encrypted</span>
+                </div>
+            </div>
+        </div>
+        <!-- END DEFAULT BLOCK -->
+
+        {% endif %}
+
+        {% endblock content %} 

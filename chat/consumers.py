@@ -38,23 +38,23 @@ class MyAsyncConsumer(AsyncJsonWebsocketConsumer):
         )
         .exists)()
 
-        print(thread,"==============>>>>>thread")
+        # print(thread,"==============>>>>>thread")
 
         if thread:
             try:
                 thread_instance = await database_sync_to_async(Thread.objects.get)(first_user=content['sent_by'], second_user=content['send_to'])
-                print(thread_instance,"===============>>>>>>>>>>>>>>>thread_instance if block")
+                # print(thread_instance,"===============>>>>>>>>>>>>>>>thread_instance if block")
             except Thread.DoesNotExist:
                 thread_instance = await database_sync_to_async(Thread.objects.get)(first_user=content['send_to'], second_user=content['sent_by'])
-                print(thread_instance,"===============>>>>>>>>>>>>>>>thread_instance if block")
+                # print(thread_instance,"===============>>>>>>>>>>>>>>>thread_instance if block")
  
                                                            
         else:
             thread_n = await database_sync_to_async(Thread.objects.create)(first_user=first_user, second_user=second_user)
             thread_instance = await database_sync_to_async(Thread.objects.get)(id=thread_n.id)
-            print(thread_instance,"===============>>>>>>>>>>>>>>>thread_instance else block")
+            # print(thread_instance,"===============>>>>>>>>>>>>>>>thread_instance else block")
 
-        await database_sync_to_async(ChatMessage.objects.create)(thread=thread_instance,user=first_user,message=content['message'])
+        await database_sync_to_async(ChatMessage.objects.create)(thread=thread_instance,user=first_user,message=content['message'],chat_room=self.chat_room)
             
 
         await self.channel_layer.group_send(self.chat_room , {
@@ -64,7 +64,7 @@ class MyAsyncConsumer(AsyncJsonWebsocketConsumer):
             'send_to' : content['send_to'],
         })
     async def neha_chat(self,event):
-        print(event,"=================event")
+        # print(event,"=================event")
         await self.send_json({
             'message' : event['message'],
             'sent_by' : event['sent_by'],

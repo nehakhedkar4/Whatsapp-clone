@@ -11,6 +11,8 @@
     </div>
 </div>
 
+second_user ========>>>> {{ second_user }}
+
 <input type="hidden" id="user1_id" value="{{user.id}}">
 
 <div class="container">
@@ -97,10 +99,19 @@
             </div>
         </div>
 
-
         <div class="col-8 p-0 d-none" id="selectedUserBlock">
             <div style="background-color: #f0f2f5; padding: 0.8rem;">
-                <div class="d-flex">
+
+
+                {% if neha %}
+                    neha: ===>>> {{ second_user }}
+                {% else %}
+                    else part
+                {% endif %}
+
+                
+                <div class="d-flex">                    
+                    
                     <div class="flex-grow-1 d-flex">
 
                         <img id="imgProfileR" src="" class="profile_img" alt="..." style="display: none;">
@@ -108,7 +119,6 @@
                             <span id="customProfile"></span>
                         </div>
                         
-
                         <div class="m-3 fw-bold" id="usernameReceiver"></div>
                     </div>
                     <div class="p-2">
@@ -118,26 +128,35 @@
                 </div>
             </div>
             <div class="p-2 message-body" style="background-color: #f7ebe1; height: 34.6rem; overflow-y: scroll; overflow-x: scroll; font-family: auto;">
-
-
                 {% for thread in threads %}
+
+                inside threads
+
+                <!-- {{thread.first_user}} -->
+                        
                     {% for chat in thread.chat_messages.all %}
+
+                        <!-- {{ thread.first_user  }} | {{ thread.second_user.id }} | {{ thread.id }} | {{chat.user.id}} -->
+                        
+                        
                         {% if chat.user.id == user.id %}
-                            
+                        
                             <div class="d-flex flex-column align-items-end message-container_receiver mt-2">
                                 <span class="p-2 px-3 m-1" style="border-radius: 17px; background-color: #C5E6A1;">{{ chat.message }}</span>
                             </div>
-
-                            {% else %}
-
+                        
+                        {% else %}
+                        
                             <div class="d-flex flex-column align-items-start mt-2">
                                 <span class="bg-white p-2 px-3 mt-1" style="border-radius: 17px;">{{ chat.message }}</span>
                             </div>
-
+                        
                         {% endif %}
-                    {% endfor %}
-                {% endfor %}
 
+                    {% endfor %}
+                        
+                    
+                {% endfor %}
 
 
                 <!-- <div class="p-2">

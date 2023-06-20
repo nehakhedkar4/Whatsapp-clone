@@ -1,6 +1,100 @@
 {% extends 'base.html' %}
 {% block sidebar %} 
-    <div class="container border">
-        <p>hell</p>
+<div class="container-fluid">
+    <div class="d-flex justify-content-end">
+        <p>Logged in as: {{ logged_in_user.username }}</p>
+        <a class="pt-2 pe-3 fs-4" style="font-family: serif; cursor: pointer; color: black;" href="{% url 'logout' %}">Log out</a>
     </div>
+</div>
+
+<input type="hidden" id="first_user" value="{{logged_in_user.id}}">
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-4 p-0">
+            <div class="border-end" style="background-color: #f0f2f5;">
+                <div class="d-flex p-3">
+                    <div class="flex-grow-1">
+                        <form>
+                            {% csrf_token %}
+                                {% if logged_in_user %}                               
+                                    {% if logged_in_user.profile_picture %}
+                                        <label for="profileIMG" style="cursor: pointer;">
+                                            <img src="{{ logged_in_user.profile_picture.url }}" class="profile_img" alt="..." id="imgchange" user="{{logged_in_user.id}}">
+                                        </label>                                                
+                                        <input type="file" name="" id="profileIMG" onchange="changeImage('{{logged_in_user.id}}')" style="display: none;">
+                                        {% else %}
+                                        <label for="profileIMG" style="cursor: pointer;">
+                                            <div class="text-white profile" id="imgchange" user="{{logged_in_user.id}}"> <span class="">{{logged_in_user.username.0}}</span> </div>
+                                        </label>
+                                        <input type="file" name="" id="profileIMG" onchange="changeImage('{{logged_in_user.id}}')" style="display: none;">
+                                    {% endif %}
+                                {% endif %}
+                        </form>
+                    </div>
+                    <div class="p-2">
+                        <span class="px-2"><i class="fa-solid fa-camera"></i></span>
+                        <span><i class="fa-solid fa-message"></i></span>
+                        <span class="px-2"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <span class="px-2"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white border shadow d-flex p-2">
+                <span class="border border-end-0" style="background-color: #f0f2f5;"><i class="fa-solid fa-magnifying-glass m-2"></i></span>
+                
+                <input id="search_user" type="text" class="form-control border-start-0 rounded-0" placeholder="Search or start a new chat" style="font-family: fangsong; background-color: #f0f2f5;">
+                <button class="btn btn-secondary rounded-0" onclick="search_user()">Search</button>
+                    
+            </div>
+                
+            <div class="shadow bg-white" style="height: 35.5rem;">
+                {% for i in conversation %}
+                    {% if i.second_user.id != logged_in_user.id %}
+                    <a href="{% url 'new' i.id %}" style="text-decoration: none;">
+                        <div class="card rounded-0 border-top-0 border-start-0 border-end-0" style="max-width: 540px;cursor: pointer;" id="user-card">
+                            <input type="hidden" class="second-user" value="{{i.id}}">
+                            <div class="row g-0">
+                                <div class="col-md-2">
+                                    {% if i.second_user.profile_picture %}
+                                        <img src="{{ i.second_user.profile_picture.url }}" class="profile_img m-3" alt="...">
+                                    {% else %}
+                                        <div class="text-white profile m-3"> <span class="profile_img">{{i.second_user.username.0}}</span> </div>
+                                    {% endif %}
+                                </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title" style="font-family: auto;">{{i.second_user.username}}</h5>
+                                    <p class="card-text" style="font-family: sans-serif;"><small class="text-muted">{{i.second_user.updated_at}}</small></p>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% elif i.first_user != logged_in_user.id %}
+                    <a href="{% url 'new' i.id %}" style="text-decoration: none;">
+                        <div class="card rounded-0 border-top-0 border-start-0 border-end-0" style="max-width: 540px;cursor: pointer;" id="user-card">
+                            <input type="hidden" class="second-user" value="{{i.id}}">
+                            <div class="row g-0">
+                                <div class="col-md-2">
+                                    {% if i.first_user.profile_picture %}
+                                        <img src="{{ i.first_user.profile_picture.url }}" class="profile_img m-3" alt="...">
+                                    {% else %}
+                                        <div class="text-white profile m-3"> <span class="profile_img">{{i.first_user.username.0}}</span> </div>
+                                    {% endif %}
+                                </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title" style="font-family: auto;">{{i.first_user.username}}</h5>
+                                    <p class="card-text" style="font-family: sans-serif;"><small class="text-muted">{{i.first_user.updated_at}}</small></p>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
 {% endblock sidebar %}

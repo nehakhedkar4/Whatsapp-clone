@@ -60,6 +60,7 @@ class ChatMessage(models.Model):
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE, null=True, blank=True, related_name='chat_messages')
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     message = models.TextField()
+    chat_room = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

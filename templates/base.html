@@ -21,9 +21,11 @@
 </head>
 <body class="bgBody">
 
-    {% block sidebar %} {% endblock sidebar%}
+    {% block sidebar %} 
+        {% include "sidebar.html" %}
+    {% endblock sidebar%}
     {% block content %} {% endblock content%}
 
-    <script src="{% static 'js/chat.js' %}"></script>
+    <script src="{% static 'js/chat_conversion.js' %}"></script>
 </body>
 </html>

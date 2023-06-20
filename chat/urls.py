@@ -4,7 +4,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('chat/',views.chatfunct),
+    # path('chat/',views.chatfunct),
+    # path('whatsapp/',views.whatsappFun, name='whatsapp'),
+    path('new/',views.newFun, name='new'),
+    path('new/<int:id>',views.newFun, name='new'),
+    path('new/<str:username>',views.newFun, name='new'),
     path('',views.login, name='login'),
     path('logout/',views.logout, name='logout'),
     path('register/',views.register, name='register'),

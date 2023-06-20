@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Chat{% endblock title%}
+{% block content %} 
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-end">
+        <p>Logged in as: {{ logged_in_user.username }}</p>
+        <a class="pt-2 pe-3 fs-4" style="font-family: serif; cursor: pointer; color: black;" href="{% url 'logout' %}">Log out</a>
+    </div>
+</div>
+
+<input type="hidden" id="first_user" value="{{logged_in_user.id}}">
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-4 p-0">
+            <div class="border-end" style="background-color: #f0f2f5;">
+                <div class="d-flex p-3">
+                    <div class="flex-grow-1">
+                        <form>
+                            {% csrf_token %}
+                                {% if logged_in_user %}                               
+                                    {% if logged_in_user.profile_picture %}
+                                        <label for="profileIMG" style="cursor: pointer;">
+                                            <img src="{{ logged_in_user.profile_picture.url }}" class="profile_img" alt="..." id="imgchange" user="{{logged_in_user.id}}">
+                                        </label>                                                
+                                        <input type="file" name="" id="profileIMG" onchange="changeImage('{{logged_in_user.id}}')" style="display: none;">
+                                        {% else %}
+                                        <label for="profileIMG" style="cursor: pointer;">
+                                            <div class="text-white profile" id="imgchange" user="{{logged_in_user.id}}"> <span class="">{{logged_in_user.username.0}}</span> </div>
+                                        </label>
+                                        <input type="file" name="" id="profileIMG" onchange="changeImage('{{logged_in_user.id}}')" style="display: none;">
+                                    {% endif %}
+                                {% endif %}
+                        </form>
+                    </div>
+                    <div class="p-2">
+                        <span class="px-2"><i class="fa-solid fa-camera"></i></span>
+                        <span><i class="fa-solid fa-message"></i></span>
+                        <span class="px-2"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <span class="px-2"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white border shadow d-flex p-2">
+                <span class="border border-end-0" style="background-color: #f0f2f5;"><i class="fa-solid fa-magnifying-glass m-2"></i></span>
+                
+                <input type="text" class="form-control border-start-0 rounded-0" placeholder="Search or start a new chat" style="font-family: fangsong; background-color: #f0f2f5;">
+            </div>
+                
+            <div class="shadow bg-white" style="height: 35.5rem;">
+                {% for i in users %}
+                    {% if i.phone != logged_in_user.phone %}
+                    <div class="card rounded-0 border-top-0 border-start-0 border-end-0" style="max-width: 540px;cursor: pointer;" id="user-card">
+                        <input type="hidden" class="second-user" value="{{i.id}}">
+                        <div class="row g-0">
+                            <div class="col-md-2">
+                                {% if i.profile_picture %}
+                                    <img src="{{ i.profile_picture.url }}" class="profile_img m-3" alt="...">
+                                {% else %}
+                                    <div class="text-white profile m-3"> <span class="profile_img">{{i.username.0}}</span> </div>
+                                {% endif %}
+                            </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-family: auto;">{{i.username}}</h5>
+                                <p class="card-text" style="font-family: sans-serif;"><small class="text-muted">{{i.updated_at}}</small></p>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- DEFAULT BLOCK -->
+        <div class="col-8 p-0" style="background-color: #f0f2f5;" id="default-block">
+            <div class="d-flex justify-content-center align-items-center flex-column text-center text-secondary" style="font-family: sans-serif;">
+                <img src="{% static 'images/Empty_Page.png' %}" alt="" class="w-50" style="margin: 10rem 0rem 2rem 0rem;">
+
+                <div class="">
+                    <h2>WhatsApp Web</h2>
+                </div>
+                <div class="firstImgblock d-flex flex-column mt-1">
+                    <span>Send and receive messages without keeping your phone online.</span>
+                    <span>Use WhatsApp on up to 4 linked devices and 1 phone at the same time.</span>
+                </div>
+                <div class="mt-5 encrypted">
+                    <span><i class="fa-solid fa-lock"></i></span>
+                    <span>End-to-end encrypted</span>
+                </div>
+            </div>
+        </div>
+        <!-- END DEFAULT BLOCK -->
+
+        <!-- CHAT CONVERSION -->
+        <div class="col-8 p-0 d-none" id="chat-conversion-block">
+            <div style="background-color: #f0f2f5; padding: 0.8rem;">
+                
+                <div class="d-flex">                    
+                    
+                    <div class="flex-grow-1 d-flex">
+
+                        <img id="second_user_ImgProfile" src="" class="profile_img" alt="..." style="display: none;">
+                        <div class="text-white profile" id="second_user_profile_custom" style="display: none;">
+                            <span id="customProfile"></span>
+                        </div>
+                        
+                        <div class="m-3 fw-bold" id="second_user_username"></div> 
+                    </div>
+                    <div class="p-2">
+                        <span class="px-2"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <span class="px-2"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-2 message-body" style="background-color: #f7ebe1; height: 34.6rem; overflow-y: scroll; overflow-x: scroll; font-family: auto;">
+
+                {% for thread in threads %}   
+
+                {{thread.first_user.id}} {{thread.second_user.id}}
+
+                    {% if thread.first_user.id > thread.second_user.id %}
+
+                        {% with thread.first_user.id|stringformat:"s" as first_user %}
+
+                            {% with thread.second_user.id|stringformat:"s" as second_user %}
+                            
+                                {% for chat in thread.chat_messages.all %}
+
+                                    {% with "chat_room_"|add:second_user|add:"_"|add:first_user as chatRoom %}
+
+                                        {% if chat.chat_room == chatRoom %}
+
+                                            {% if chat.user.id == logged_in_user.id %}
+                            
+                                                <div class="d-flex flex-column align-items-end message-container_receiver mt-2">
+                                                    <span class="p-2 px-3 m-1" style="border-radius: 17px; background-color: #C5E6A1;">{{ chat.message }}</span>
+                                                </div>
+                                        
+                                            {% else %}
+                                            
+                                                <div class="d-flex flex-column align-items-start mt-2">
+                                                    <span class="bg-white p-2 px-3 mt-1" style="border-radius: 17px;">{{ chat.message }}</span>
+                                                </div>
+                                            
+                                            {% endif %}
+
+                                        {% endif %}
+
+
+                                    {% endwith %}
+                                        
+                                {% endfor %}
+                            {% endwith %}
+                        {% endwith %}
+                                    
+                                    
+                    {% else %}
+
+                    {% with thread.first_user.id|stringformat:"s" as first_user %}
+
+                            {% with thread.second_user.id|stringformat:"s" as second_user %}
+                            
+                                {% for chat in thread.chat_messages.all %}
+
+                                    {% with "chat_room_"|add:first_user|add:"_"|add:second_user as chatRoom %}
+
+                                        {% if chat.chat_room == chatRoom %}
+
+                                            {% if chat.user.id == logged_in_user.id %}
+                                
+                                                <div class="d-flex flex-column align-items-end message-container_receiver mt-2">
+                                                    <span class="p-2 px-3 m-1" style="border-radius: 17px; background-color: #C5E6A1;">{{ chat.message }}</span>
+                                                </div>
+                                    
+                                            {% else %}
+                                            
+                                                <div class="d-flex flex-column align-items-start mt-2">
+                                                    <span class="bg-white p-2 px-3 mt-1" style="border-radius: 17px;">{{ chat.message }}</span>
+                                                </div>
+                                            
+                                            {% endif %}
+
+                                        {% endif %}
+
+                                    {% endwith %}
+                                        
+                                {% endfor %}
+                            {% endwith %}
+                        {% endwith %}
+                                    
+
+                    {% endif %}
+
+                {% endfor %}
+
+                
+               
+            </div>
+            <div class="p-3 border d-flex" style="background-color: #f0f2f5;">
+                <i class=" fa-regular fa-face-smile mx-1 me-3 mt-2" style="cursor: pointer;"></i>
+                <i class=" fa-solid fa-paperclip me-3 mt-2" style="cursor: pointer;"></i>
+                <input type="text" class="form-control border" placeholder="Type a Message.." style="font-family: sans-serif;" id="input-message">
+                <i class="fa-regular fa-paper-plane mx-1 mt-2 ms-3" style="cursor: pointer;" onclick="msg_send()"></i>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+{% endblock content%} 

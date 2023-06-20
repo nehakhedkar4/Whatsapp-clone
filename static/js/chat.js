@@ -2,7 +2,6 @@ console.log("chat.js loaded")
 
 var user1_id = document.getElementById('user1_id').value
 let input_message = document.getElementById('input-message')
-console.log(user1_id,"=============user_1_id")
 
 var data;
 var ws;
@@ -14,71 +13,78 @@ userCards.forEach(function(card){
 
         console.log("click to user card")
 
+        
+        
+        var msg_body = document.querySelector('.message-body')
+
+        
         user2_id = card.querySelector('.receiver-id').value
-        console.log(user2_id,"=============user_2_id")
+
+        // AJAX FOR USER 2
+        chat_conversion(user2_id, user1_id)
+
 
         // Hide the default block
         document.querySelector('.col-8').classList.add('d-none');
         // Show the selected user block
         document.getElementById('selectedUserBlock').classList.remove('d-none');
 
-        var username = card.querySelector('.card-title').textContent
-        var profile_img = card.querySelector('.profile_img')
+        // var username = card.querySelector('.card-title').textContent
+        // var profile_img = card.querySelector('.profile_img')
 
-        document.getElementById('usernameReceiver').textContent = username
+        // document.getElementById('usernameReceiver').textContent = username
 
-        if (profile_img.tagName === 'IMG') {
-            var imgProfile_Receiver = document.getElementById('imgProfileR')
-            imgProfile_Receiver.setAttribute('src', profile_img.getAttribute('src'))
-            imgProfile_Receiver.style.display = 'block'
-            document.getElementById('profileReceiver').style.display = 'none'
-        } else {
-            document.getElementById('customProfile').textContent = username[0]
-            document.getElementById('profileReceiver').style.display = 'block'
-            document.getElementById('imgProfileR').style.display = 'none' 
-        }
+        // if (profile_img.tagName === 'IMG') {
+        //     var imgProfile_Receiver = document.getElementById('imgProfileR')
+        //     imgProfile_Receiver.setAttribute('src', profile_img.getAttribute('src'))
+        //     imgProfile_Receiver.style.display = 'block'
+        //     document.getElementById('profileReceiver').style.display = 'none'
+        // } else {
+        //     document.getElementById('customProfile').textContent = username[0]
+        //     document.getElementById('profileReceiver').style.display = 'block'
+        //     document.getElementById('imgProfileR').style.display = 'none' 
+        // }
 
 
-        // Websocket connection
-        ws = new WebSocket('ws://' + window.location.host + '/ws/async/' + user1_id + '/' + user2_id) 
+        // // Websocket connection
+        // ws = new WebSocket('ws://' + window.location.host + '/ws/async/' + user1_id + '/' + user2_id) 
 
-        ws.onopen = function(){
-            console.log("Connected")
-        }
+        // ws.onopen = function(){
+        //     console.log("Connected")
+        // }
         
-        ws.onerror = function(e){
-            console.log("Error :",e)
-        }
+        // ws.onerror = function(e){
+        //     console.log("Error :",e)
+        // }
         
-        ws.onclose = function(){
-            console.log("Disconnected")
-        }
+        // ws.onclose = function(){
+        //     console.log("Disconnected")
+        // }
         
-        ws.onmessage = function(e){
-            console.log("Message from Server: ",e.data)            
+        // ws.onmessage = function(e){
+        //     console.log("Message from Server: ",e.data)            
         
-            data = JSON.parse(e.data)
-            console.log("done")
+        //     data = JSON.parse(e.data)
+        //     console.log("done")
 
-            var msg_body = document.querySelector('.message-body')
 
-            if (data.sent_by === user1_id){
+        //     if (data.sent_by === user1_id){
                 
-                var message_ele = `<div class="d-flex flex-column align-items-end mt-2">
-                                        <span class="p-2 px-3 m-1" style="border-radius: 17px; background-color: #C5E6A1;">${data.message} </span>
-                                    </div>`
+        //         var message_ele = `<div class="d-flex flex-column align-items-end mt-2">
+        //                                 <span class="p-2 px-3 m-1" style="border-radius: 17px; background-color: #C5E6A1;">${data.message} </span>
+        //                             </div>`
 
-                msg_body.innerHTML += message_ele
-            } else {
+        //         msg_body.innerHTML += message_ele
+        //     } else {
 
-                var message_ele = `<div class="d-flex flex-column align-items-start mt-2">
-                                        <span class="bg-white p-2 px-3 mt-1" style="border-radius: 17px;">${data.message} </span>
-                                    </div>`
+        //         var message_ele = `<div class="d-flex flex-column align-items-start mt-2">
+        //                                 <span class="bg-white p-2 px-3 mt-1" style="border-radius: 17px;">${data.message} </span>
+        //                             </div>`
 
-                msg_body.innerHTML += message_ele
-            }
+        //         msg_body.innerHTML += message_ele
+        //     }
 
-        }
+        // }
     })
 })
 
@@ -96,6 +102,26 @@ function msg_send(){
     
     console.log("data: ", data)
 }
+function chat_conversion(user2_id, user1_id){
+    console.log(user2_id,"==============user2_id")
+    console.log(user1_id,"==============user1_id")
+    $.ajax({
+        url: '/chat/',
+        type: 'GET',
+        data: {
+            'action' : 'chat_conversion',
+            'user2_id' : user2_id,
+            'user1_id' : user1_id,
+        },
+        success: function (data) {
+            console.log("success")
+        },
+        error: function(error){
+            console.log("error: ",error)
+        }
+    })
+}
+
 
 function verifyOtp(value){
     console.log(value)
