@@ -6,9 +6,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     # path('chat/',views.chatfunct),
     # path('whatsapp/',views.whatsappFun, name='whatsapp'),
-    path('new/',views.newFun, name='new'),
-    path('new/<int:id>',views.newFun, name='new'),
-    path('new/<str:username>',views.newFun, name='new'),
+    path('chat/',views.newFun, name='chat'),
+    path('chat/<int:id>',views.newFun, name='chat'),
+    path('chat/<str:username>',views.newFun, name='chat'),
     path('',views.login, name='login'),
     path('logout/',views.logout, name='logout'),
     path('register/',views.register, name='register'),

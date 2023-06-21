@@ -66,12 +66,12 @@ function search_user(){
     var search_user = document.getElementById('search_user').value
     console.log(search_user,"=============================search_user")
     $.ajax({
-        url: '/new/' + search_user,
+        url: '/chat/' + search_user,
         type: 'GET',
         success: function(data){
             console.log("success",data)
             if (data.status === 200) {
-                window.location.href = '/new/'+ data.thread
+                window.location.href = '/chat/'+ data.thread
             } else {
                 console.log(data.error)
                 alert(data.error)

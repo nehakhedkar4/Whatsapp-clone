@@ -19,11 +19,10 @@
 
     <title>WhatsApp | {% block title %}{% endblock title %}</title>
 </head>
-<body class="bgBody">
+<body>
 
-    {% block sidebar %} 
-        {% include "sidebar.html" %}
-    {% endblock sidebar%}
+    {% include "sidebar.html" %}
+    
     {% block content %} {% endblock content%}
 
     <script src="{% static 'js/chat_conversion.js' %}"></script>

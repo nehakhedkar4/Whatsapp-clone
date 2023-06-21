@@ -25,5 +25,33 @@
 }
 .user-card.active {
     background-color: #f0f2f5;
-    /* Add any other desired styling */
-  }
+}
+.dropdownN {
+    position: relative;
+    display: inline-block;
+}
+.dropbtnN {
+    border: none;
+    cursor: pointer;
+}
+.dropdownN-contentN {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    right: 1px;
+    left: auto;
+}
+.dropdownN:hover .dropdownN-contentN {
+    display: block;
+}
+.dropdownN-contentN a {
+    color: black;
+    padding: 9px 11px;
+    text-decoration: none;
+    display: block;
+    font-family: fangsong;
+}
+.dropdownN-contentN a:hover {background-color: #f1f1f1}

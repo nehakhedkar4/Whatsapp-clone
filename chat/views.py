@@ -125,6 +125,21 @@ def whatsappFun(request):
 
 def newFun(request, id=None, username=None):
 
+    if request.method == 'POST':
+
+        img = request.FILES.get('img')
+        user_id = request.POST.get('user_id')
+        
+        if img and user_id:
+            user = MyUser.objects.get(id=user_id)
+            user.profile_picture = img
+            # user.profile_picture.save(img.name, img)
+            user.save()
+            image_url = user.profile_picture.url
+            return JsonResponse({'image_url' : image_url})
+
+        return redirect('/chat/')
+
     if 'user' in request.session:
         logged_in_user = MyUser.objects.get(phone=request.session['user'])
         # users = Thread.objects.all()
