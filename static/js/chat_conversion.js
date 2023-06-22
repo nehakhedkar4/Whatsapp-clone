@@ -130,7 +130,7 @@ function changeImage(value){
         contentType: false,
         headers: {
             'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val() 
-          },
+        },
         success: function(response){
             console.log("success",response)
             document.getElementById("imgchange").src = response.image_url

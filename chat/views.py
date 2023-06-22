@@ -127,6 +127,9 @@ def newFun(request, id=None, username=None):
 
     if request.method == 'POST':
 
+        if request.POST.get('action') == 'create_group':
+            return  JsonResponse({'status' : 200})
+
         img = request.FILES.get('img')
         user_id = request.POST.get('user_id')
         
@@ -144,6 +147,8 @@ def newFun(request, id=None, username=None):
         logged_in_user = MyUser.objects.get(phone=request.session['user'])
         # users = Thread.objects.all()
         users = Thread.objects.filter(Q(first_user=logged_in_user) | Q(second_user=logged_in_user))
+    
+    all_users = MyUser.objects.all().exclude(id=logged_in_user.id)
     
     chat_user = ''
 
@@ -194,12 +199,14 @@ def newFun(request, id=None, username=None):
             'conversation': users,
             'chat_messages' : chat_messages,
             'chat_user': chat_user,
+            'all_users' : all_users,
             
         })   
 
     return render(request, 'chat_conversion.html', {
         'logged_in_user': logged_in_user,
         'conversation': users,
+        'all_users' : all_users,
     })
 
 

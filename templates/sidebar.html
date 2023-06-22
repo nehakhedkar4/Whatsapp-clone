@@ -1,3 +1,6 @@
+{% load static %}
+
+<script src="{% static 'js/sidebar.js' %}"></script>
 
 <div class="container-fluid">
     <div class="d-flex justify-content-end">
@@ -38,7 +41,7 @@
                             <button class="dropbtnN"><i
                                     class="fa-solid fa-ellipsis-vertical"></i></button>
                             <div class="dropdownN-contentN">
-                                <a href="#">New Group</a>
+                                <a href="#" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop">New Group</a>
                                 <a href="#">Starred messages</a>
                                 <a href="{% url 'logout' %}">Log out</a>
                             </div>
@@ -101,5 +104,143 @@
                     {% endif %}
                 {% endfor %}
             </div>
-        </div>
+        </div>          
 
+        <!-- To Select Group Members -->
+        <div class="offcanvas offcanvas-start p-0" data-bs-backdrop="static" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel" style="overflow-y: scroll;">
+            <div class="d-flex text-white" style="background-color: #008069;">
+                <div class="p-4">
+                    <span class="p-2 pe-4" type="button" data-bs-dismiss="offcanvas" aria-label="Close"><i class="fa-solid fa-arrow-left-long"></i></span>
+                    <span class="p-2" class="offcanvas-title" id="staticBackdropLabel" style="font-family: auto; font-size: larger;">Add group participant</span>
+                </div>
+            </div>
+
+            <div class="ms-5 mt-3 p-2" id="selectUser">
+            </div>
+
+            <div class="m-4">
+                <input class="form-control border-top-0 border-end-0 border-start-0 rounded-0" type="text" placeholder="Type contact name" style="font-family: revert;">
+            </div>
+            <div class="offcanvas-body p-0">
+                {% for user in all_users %}
+                    <div class="card rounded-0 border-top-0 border-start-0 border-end-0" data-user-id="{{user.id}}" style="cursor: pointer;" onclick="addToGrp('{{user.id}}')">
+                        <div class="row g-0">
+                            <div class="col-md-2">
+                                {% if user.profile_picture %}
+                                    <img src="{{ user.profile_picture.url }}" class="profile_img m-3" alt="...">
+                                {% else %}
+                                    <div class="text-white profile m-3"> <span class="profile_img">{{user.username.0}}</span> </div>
+                                {% endif %}
+                            </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title username" style="font-family: auto;">{{user.username}}</h5>
+                                <p class="card-text" style="font-family: sans-serif;"><small class="text-muted">{{user.updated_at}}</small></p>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="d-none" style="background-color: #f0f2f5;" id="GoToNext">
+                <div class="d-flex justify-content-center m-4">
+                    <a data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling1" aria-controls="offcanvasScrolling1" style="text-decoration: none; cursor: pointer;">
+                        <div class="text-white" style="background-color: #00a884; padding: 16px 21px; border-radius: 50%;">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- End of Select Group Members -->
+
+        <!-- Last step for a new Group -->
+        <div style="background-color: #f0f2f5;" class="offcanvas offcanvas-start p-0" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling1" aria-labelledby="offcanvasScrollingLabel1">
+            <div class="d-flex text-white" style="background-color: #008069;">
+                <div class="p-4">
+                    <span class="p-2 pe-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop" aria-controls="staticBackdrop"><i class="fa-solid fa-arrow-left-long"></i></span>
+                    <span class="p-2" class="offcanvas-title" id="staticBackdropLabel" style="font-family: auto; font-size: larger;">New Group</span>
+                </div>
+            </div>
+            <div class="bg-white shadow">
+                <div class="d-flex justify-content-center">
+                    <div class="m-5">
+                        <div class="" id="pre-group-icon">
+                            <label for="grpIcon" class="group-icon text-white d-flex flex-column">
+                                <span class="d-flex justify-content-center"><i class="fa-2x fa-solid fa-camera"></i></span>
+                                <span class="text-center mt-2">ADD GROUP ICON</span>
+                            </label>
+                            <input type="file" id="grpIcon" class="d-none" onchange="addGroupIcon()">
+                        </div>
+                        <img src="" class="d-none group-icon-img" id="group-img">
+                    </div>
+                </div>
+                <div class="mx-4" style="font-family: none;">
+                    <small class="text-secondary">Group Subject</small>
+                </div>
+                <div class="mx-4 mt-2 mb-4 d-flex justify-content-between group-name">
+                    <input id="input-grpName" class="border-0 mb-1" type="text" placeholder="Type group subject here..." style="font-family: 'Times New Roman', Times, serif;">
+                    <i class="fa-regular fa-face-smile" style="font-size: 22px;"></i>
+                </div>
+            </div>
+            <div class="m-4 d-flex justify-content-center d-none" id="lastStep">
+                <div class="text-white checkblock">
+                    <i class="fa-solid fa-check" style="font-size: 19px" onclick="createGroup()"></i>
+                </div>
+            </div>
+        </div>
+        <!-- End of Last step -->
+
+      
+<style>
+.selectedUserP{
+    background-color: #9b34eb;
+    padding: 10px 17px;
+    border-radius: 50%;
+}
+.group-icon{
+    background-color: #607D8C;
+    display: block;
+    width: 13rem;
+    height: 13rem;
+    border-radius: 50%;
+    padding: 4rem 3rem;
+    font-family: "Times New Roman", Times, serif;
+    cursor: pointer;
+}
+.group-icon-img{
+    background-color: #607D8C;
+    display: block;
+    width: 13rem;
+    height: 13rem;
+    border-radius: 50%;
+    font-family: "Times New Roman", Times, serif;
+}
+input:focus {
+  outline: none;
+}
+.group-name{
+    border-bottom: 2px solid #008069;
+}
+.checkblock{
+    background-color: #00a884;
+    border-radius: 50%;
+    padding: 13px 16px;
+    cursor: pointer;
+}
+
+</style>
+
+<script>
+    var inputGrpName = document.getElementById('input-grpName')
+
+    inputGrpName.addEventListener('input',function(){
+        var lastStep = document.getElementById('lastStep');
+        if (inputGrpName.value.length > 0) {
+            lastStep.classList.remove('d-none');
+        } else {
+            lastStep.classList.add('d-none');
+        }
+    })
+
+</script>
