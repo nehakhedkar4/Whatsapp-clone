@@ -103,6 +103,29 @@
                     </a>
                     {% endif %}
                 {% endfor %}
+                {% if groups %}
+                    {% for g in groups %}
+                        <a href="{% url 'group' g.id %}" style="text-decoration: none;">
+                            <div class="card rounded-0 border-top-0 border-start-0 border-end-0" style="max-width: 540px;cursor: pointer;">
+                                <div class="row g-0">
+                                    <div class="col-md-2">
+                                        {% if g.group_icon %}
+                                            <img src="{{ g.group_icon.url }}" class="profile_img m-3" alt="...">
+                                        {% else %}
+                                            <span class="group-profile m-3"><i class="fa-solid fa-people-group"></i></span>
+                                        {% endif %}
+                                    </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title" style="font-family: auto;">{{g.group_name}}</h5>
+                                        <!-- <p class="card-text" style="font-family: sans-serif;"><small class="text-muted">Ne</small></p> -->
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>          
 
@@ -184,8 +207,8 @@
                 </div>
             </div>
             <div class="m-4 d-flex justify-content-center d-none" id="lastStep">
-                <div class="text-white checkblock">
-                    <i class="fa-solid fa-check" style="font-size: 19px" onclick="createGroup()"></i>
+                <div class="text-white checkblock" onclick="createGroup()">
+                    <i class="fa-solid fa-check" style="font-size: 19px"></i>
                 </div>
             </div>
         </div>
@@ -227,6 +250,14 @@ input:focus {
     border-radius: 50%;
     padding: 13px 16px;
     cursor: pointer;
+}
+.group-profile{
+    background-color: #757575;
+    padding: 13px 17px 17px 17px;
+    border-radius: 50%;
+    display:block;
+    width:50px;
+    height:50px;
 }
 
 </style>

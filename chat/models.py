@@ -64,13 +64,16 @@ class ChatMessage(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+class Group(models.Model):
+    group_name = models.CharField(max_length=255)
+    group_icon = models.ImageField(upload_to='group_icons',null=True,blank=True)
+    group_members = models.ManyToManyField(MyUser,related_name='groups')
+    created_at = models.DateTimeField(auto_now_add=True)
 
-# class Chat(models.Model):
-#     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-#     message = models.CharField(max_length=255)
-#     profile_picture = models.ImageField(upload_to='profile_picture')
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
+class GroupChat(models.Model):
+    group_name = models.ForeignKey(Group,on_delete=models.CASCADE)
+    sender = models.ForeignKey(MyUser,on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-# class Group(models.Model):
-#     group_name = models.CharField(max_length=255)

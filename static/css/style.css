@@ -56,9 +56,11 @@
 }
 .dropdownN-contentN a:hover {background-color: #f1f1f1}
 
-/* .sideHeader{
-    font-family: auto; 
-    font-size: larger;
-    background-color: #008069;
-    color: white;
-} */
+.group-profile{
+    background-color: #757575;
+    padding: 13px 17px 17px 17px;
+    border-radius: 50%;
+    display:block;
+    width:50px;
+    height:50px;
+}

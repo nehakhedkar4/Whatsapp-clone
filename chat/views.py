@@ -122,12 +122,28 @@ def whatsappFun(request):
     else:
         redirect('/')
 
-
+import json
 def newFun(request, id=None, username=None):
+
+    print(request.path,"==================req path")
 
     if request.method == 'POST':
 
         if request.POST.get('action') == 'create_group':
+
+            member_ids = json.loads(request.POST.get('memberIDs'))
+            group_name = request.POST.get('grpName')
+            group_icon = request.FILES.get('img')
+
+            if group_icon != None:
+                group = Group.objects.create(group_name=group_name,group_icon=group_icon)
+            else:
+                group = Group.objects.create(group_name=group_name)
+            
+            group.group_members.add(MyUser.objects.get(phone=request.session['user']))
+            for i in member_ids:
+                group.group_members.add(MyUser.objects.get(id=i))
+            
             return  JsonResponse({'status' : 200})
 
         img = request.FILES.get('img')
@@ -145,14 +161,17 @@ def newFun(request, id=None, username=None):
 
     if 'user' in request.session:
         logged_in_user = MyUser.objects.get(phone=request.session['user'])
-        # users = Thread.objects.all()
         users = Thread.objects.filter(Q(first_user=logged_in_user) | Q(second_user=logged_in_user))
     
     all_users = MyUser.objects.all().exclude(id=logged_in_user.id)
-    
+
+    print(Group.objects.filter(group_members=logged_in_user),"--------------------------------------")
+
+    groups = Group.objects.filter(group_members=logged_in_user)
+
     chat_user = ''
 
-    if username != None:
+    if username != None and '/user' in request.path:
         print("username: ",username)
         try: 
             second_user = MyUser.objects.get(username=username)
@@ -170,7 +189,7 @@ def newFun(request, id=None, username=None):
                 })
 
     
-    if id != None:
+    if id != None and '/user' in request.path:
         print("Thread id: ", id)
 
         chat_messages = ChatMessage.objects.filter(thread=id)
@@ -179,7 +198,6 @@ def newFun(request, id=None, username=None):
             for i in chat_messages:
                 if i.user != logged_in_user:
                     chat_user = i.user
-                    print("true")
                 else:
                     thread_in = Thread.objects.get(id=id)
                     if thread_in.first_user == logged_in_user:
@@ -200,13 +218,29 @@ def newFun(request, id=None, username=None):
             'chat_messages' : chat_messages,
             'chat_user': chat_user,
             'all_users' : all_users,
+            'groups' : groups,
             
         })   
+
+    if id != None and '/group' in request.path:
+        print("group ID--------------------------------", id)
+        group_obj = Group.objects.get(id=id)
+        print(group_obj,"=-----------------------------grp obj")
+        print(group_obj.group_name,"=-----------------------------grp obj")
+        return render(request, 'chat_conversion.html', {
+            'group_obj' : group_obj,
+            'logged_in_user': logged_in_user,
+            'conversation': users,
+            'all_users' : all_users,
+            'groups' : groups,
+        })
+
 
     return render(request, 'chat_conversion.html', {
         'logged_in_user': logged_in_user,
         'conversation': users,
         'all_users' : all_users,
+        'groups' : groups,
     })
 
 
@@ -303,3 +337,12 @@ def chatfunct(request):
             return JsonResponse({'image_url' : image_url})
 
         return redirect('/chat/')
+    
+
+print()
+group_obj = Group.objects.filter(id=5)
+print(group_obj,"=-----------------------------grp obj")
+for i in group_obj:
+    print(i.group_members.all())
+print()
+print()

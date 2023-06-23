@@ -66,7 +66,7 @@ function search_user(){
     var search_user = document.getElementById('search_user').value
     console.log(search_user,"=============================search_user")
     $.ajax({
-        url: '/chat/' + search_user,
+        url: '/chat/user/' + search_user,
         type: 'GET',
         success: function(data){
             console.log("success",data)

@@ -83,33 +83,39 @@ function addGroupIcon(){
 
 }
 
-function createGroup(){
-    console.log("create group")
-    console.log(memberIDs,"======members")
-    console.log(inputGrpName.value,"========group_name")
-    console.log(group_img, "=========group icon")
+function createGroup() {
+    console.log("create group");
+    console.log(memberIDs, "======members");
+    console.log(inputGrpName.value, "========group_name");
+    console.log(group_img, "=========group icon");
+
+    var formdata = new FormData();
     if (group_img) {
-        console.log("yes")
-    } else {
-        console.log("No")
+        formdata.append('img', group_img);
     }
+    formdata.append('action', 'create_group');
+    formdata.append('grpName', inputGrpName.value);
+    formdata.append('memberIDs', JSON.stringify(memberIDs));
+
     $.ajax({
         url: '/chat/',
         type: 'POST',
-        data: {
-            action : create_group,
-            memberIDs : JSON.stringify(memberIDs),
-            grpName : inputGrpName.value,
-            img : group_img
-        },
+        data: formdata,
+        processData: false,
+        contentType: false,
         headers: {
-            'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val() 
+            'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
         },
-        success: function(){
-            console.log("success")
+        success: function(response) {
+            console.log("success", response);
+            if (response.status === 200) {
+                window.location.href = '/chat';
+            } else {
+                alert("ERROR: Error while creating a group!");
+            }
         },
-        error: function(error){
-            console.log("ERROR: ",error)
+        error: function(error) {
+            console.log("ERROR: ", error);
         }
-    })
-} 
+    });
+}
