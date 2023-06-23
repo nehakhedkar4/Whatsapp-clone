@@ -125,8 +125,6 @@ def whatsappFun(request):
 import json
 def newFun(request, id=None, username=None):
 
-    print(request.path,"==================req path")
-
     if request.method == 'POST':
 
         if request.POST.get('action') == 'create_group':
@@ -152,7 +150,6 @@ def newFun(request, id=None, username=None):
         if img and user_id:
             user = MyUser.objects.get(id=user_id)
             user.profile_picture = img
-            # user.profile_picture.save(img.name, img)
             user.save()
             image_url = user.profile_picture.url
             return JsonResponse({'image_url' : image_url})
@@ -164,8 +161,6 @@ def newFun(request, id=None, username=None):
         users = Thread.objects.filter(Q(first_user=logged_in_user) | Q(second_user=logged_in_user))
     
     all_users = MyUser.objects.all().exclude(id=logged_in_user.id)
-
-    print(Group.objects.filter(group_members=logged_in_user),"--------------------------------------")
 
     groups = Group.objects.filter(group_members=logged_in_user)
 
@@ -223,16 +218,17 @@ def newFun(request, id=None, username=None):
         })   
 
     if id != None and '/group' in request.path:
-        print("group ID--------------------------------", id)
         group_obj = Group.objects.get(id=id)
-        print(group_obj,"=-----------------------------grp obj")
-        print(group_obj.group_name,"=-----------------------------grp obj")
+
+        group_messages = GroupChat.objects.filter(group_name=group_obj)
+
         return render(request, 'chat_conversion.html', {
             'group_obj' : group_obj,
             'logged_in_user': logged_in_user,
             'conversation': users,
             'all_users' : all_users,
             'groups' : groups,
+            'group_messages' : group_messages,
         })
 
 
@@ -338,11 +334,3 @@ def chatfunct(request):
 
         return redirect('/chat/')
     
-
-print()
-group_obj = Group.objects.filter(id=5)
-print(group_obj,"=-----------------------------grp obj")
-for i in group_obj:
-    print(i.group_members.all())
-print()
-print()

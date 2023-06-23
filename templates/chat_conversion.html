@@ -5,12 +5,14 @@
 
 
 <!-- CHAT CONVERSION -->
+{% if chat_user  or  group_obj %}
     <div class="col-8 p-0" id="chat-conversion-block">
         <div style="background-color: #f0f2f5; padding: 0.8rem;">
             
             <div class="d-flex">                    
                 
                 <div class="flex-grow-1 d-flex">
+
                     {% if chat_user %}
                     
                         <input type="hidden" id="second-user" value="{{chat_user.id}}">
@@ -21,17 +23,25 @@
                             <span id="customProfile">{{ chat_user.username.0 }}</span>
                         </div>
                         {% endif %}
+                        <div class="m-3 fw-bold">{{chat_user.username}}</div>
 
-                    {% elif group_obj %}
-                    
+                    {% endif %}
+
+                    {% if group_obj %}
+                        
+                        <input type="hidden" id="group-id" value="{{group_obj.id}}">
                         {% if group_obj.group_icon %}
                             <img src="{{ group_obj.group_icon.url }}" class="profile_img" alt="...">
                         {% else %}
                             <span class="group-profile"><i class="fa-solid fa-people-group"></i></span>
                         {% endif %}
-                   
                     
-                    <div class="m-3 fw-bold">{{group_obj.group_name}}</div>
+                        <div class="ms-3 mt-1 d-flex flex-column">
+                            <span class="fw-bold">{{group_obj.group_name}}</span> 
+                            <small style="font-size: 13px; color: gray; font-family: 'Times New Roman', Times, serif;">tap here for group info.. </small>   
+                        </div>
+                    {% endif %}
+                    
                 </div>
                 <div class="p-2">
                     <span class="px-2"><i class="fa-solid fa-magnifying-glass"></i></span>
@@ -39,7 +49,9 @@
                 </div>
             </div>
         </div>
-        <div class="p-2 message-body" style="background-color: #f7ebe1; height: 34.6rem; overflow-y: scroll; overflow-x: scroll; font-family: auto;">            
+        <div class="p-2 message-body" style="background-color: #f7ebe1; height: 34.6rem; overflow-y: scroll; overflow-x: scroll; font-family: auto;"> 
+            
+        <!-- INDIVIDUAL CHAT -->
         {% if chat_messages %}
            {% for chat in chat_messages %}
 
@@ -59,6 +71,30 @@
 
            {% endfor %}
         {% endif %}
+        <!-- END INDIVIDUAL CHAT -->
+
+        <!-- GROUP CHAT -->
+        {% if group_messages %}
+           {% for msg in group_messages %}
+
+                {% if msg.sender.id == logged_in_user.id %}
+                            
+                    <div class="d-flex flex-column align-items-end message-container_receiver mt-2">
+                        <span class="p-2 px-3 m-1" style="border-radius: 17px; background-color: #C5E6A1;">{{ msg.message }}</span>
+                    </div>
+                                        
+                {% else %}
+                                            
+                    <div class="d-flex flex-column align-items-start mt-2">
+                        <small class="text-success">{{ msg.sender.username }}</small>
+                        <span class="bg-white p-2 px-3 mt-1" style="border-radius: 17px;">{{ msg.message }}</span>
+                    </div>
+                                            
+                {% endif %}
+
+           {% endfor %}
+        {% endif %}
+        <!-- END GROUP CHAT -->
         </div>
         <div class="p-3 border d-flex" style="background-color: #f0f2f5;">
             <i class=" fa-regular fa-face-smile mx-1 me-3 mt-2" style="cursor: pointer;"></i>

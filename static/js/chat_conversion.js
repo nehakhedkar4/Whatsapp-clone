@@ -1,14 +1,35 @@
 console.log("chat_conversion.js loaded")
 
+var ws;
+var second_user;
+
+first_user = document.getElementById('first_user').value
+console.log("first_user: ",first_user)
+
+var group_id = document.getElementById('group-id')
+console.log(group_id,":group_id")
+
 var input_message = document.getElementById('input-message')
-var first_user = document.getElementById('first_user').value
-var second_user = document.getElementById('second-user').value
+// var first_user = document.getElementById('first_user').value
+// var second_user = document.getElementById('second-user').value
 var msg_body = document.querySelector('.message-body')
-console.log("first_user: ",first_user, "second_user: ",second_user)
+
+
 
 // WEBSOCKET CONNECTION
-ws = new WebSocket('ws://' + window.location.host + '/ws/async/' + first_user + '/' + second_user) 
-console.log("ws: ",ws)
+
+if (group_id){
+    console.log("inside if for group")
+    ws = new WebSocket('ws://' + window.location.host + '/ws/async/group/' + group_id.value) 
+    console.log("ws: ",ws)
+} else {
+    console.log("else for chat ")
+    second_user = document.getElementById('second-user').value
+    console.log("first_user: ",first_user, "second_user: ",second_user)
+    ws = new WebSocket('ws://' + window.location.host + '/ws/async/' + first_user + '/' + second_user) 
+    console.log("ws: ",ws)
+}
+
 
 ws.onopen = function(){
     console.log("Connected")
@@ -28,38 +49,73 @@ ws.onmessage = function(e){
     data = JSON.parse(e.data)
     console.log("done")
 
+    if (data.from === 'group') {
+        console.log(data.from,"==from")
+        console.log("data.sender_id type: ",typeof(data.sender_id), "first_user type: ",typeof(first_user))
 
-    if (data.sent_by === first_user){
-        
-        var message_ele = `<div class="d-flex flex-column align-items-end mt-2">
-                                <span class="p-2 px-3 m-1" style="border-radius: 17px; background-color: #C5E6A1;">${data.message} </span>
-                            </div>`
+        if (data.sender_id === parseInt(first_user)) {
 
-        msg_body.innerHTML += message_ele
+            var message_ele = `<div class="d-flex flex-column align-items-end mt-2">
+                                    <span class="p-2 px-3 m-1" style="border-radius: 17px; background-color: #C5E6A1;">${data.message} </span>
+                                </div>`
+    
+            msg_body.innerHTML += message_ele
+
+        } else {
+
+            var message_ele = `<div class="d-flex flex-column align-items-start mt-2">
+                                    <small class="text-success">${data.sender}</small>
+                                    <span class="bg-white p-2 px-3 mt-1" style="border-radius: 17px;">${data.message} </span>
+                                </div>`
+
+            msg_body.innerHTML += message_ele
+        }
     } else {
-
-        var message_ele = `<div class="d-flex flex-column align-items-start mt-2">
-                                <span class="bg-white p-2 px-3 mt-1" style="border-radius: 17px;">${data.message} </span>
-                            </div>`
-
-        msg_body.innerHTML += message_ele
+        if (data.sent_by === first_user){
+            
+            var message_ele = `<div class="d-flex flex-column align-items-end mt-2">
+                                    <span class="p-2 px-3 m-1" style="border-radius: 17px; background-color: #C5E6A1;">${data.message} </span>
+                                </div>`
+    
+            msg_body.innerHTML += message_ele
+        } else {
+    
+            var message_ele = `<div class="d-flex flex-column align-items-start mt-2">
+                                    <span class="bg-white p-2 px-3 mt-1" style="border-radius: 17px;">${data.message} </span>
+                                </div>`
+    
+            msg_body.innerHTML += message_ele
+        }
     }
+
+
 
 }
 
 function msg_send(){
     console.log("click to send")
-    console.log("first_user: ",first_user)
-    console.log("second_user: ",second_user)
-    
-    ws.send(JSON.stringify({
-        'message' : input_message.value,
-        'sent_by' : first_user,
-        'send_to' : second_user,
-    }))
+
+    if (group_id){
+        console.log("send to grp")
+        ws.send(JSON.stringify({
+            'message_to' : 'group',
+            'message': input_message.value,
+            'sender' : first_user,
+        }))
+    } else {
+        console.log("send to chat")
+        console.log("first_user: ",first_user)
+        console.log("second_user: ",second_user)
+        
+        ws.send(JSON.stringify({
+            'message_to' : 'chat',
+            'message' : input_message.value,
+            'sent_by' : first_user,
+            'send_to' : second_user,
+        }))
+    }
     input_message.value = ""
-    
-    console.log("data: ", data)
+   
 }
 
 function search_user(){
