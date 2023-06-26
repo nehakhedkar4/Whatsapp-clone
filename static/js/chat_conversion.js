@@ -13,7 +13,7 @@ var input_message = document.getElementById('input-message')
 // var first_user = document.getElementById('first_user').value
 // var second_user = document.getElementById('second-user').value
 var msg_body = document.querySelector('.message-body')
-
+msg_body.scrollTop = msg_body.scrollHeight;
 
 
 // WEBSOCKET CONNECTION
@@ -87,35 +87,36 @@ ws.onmessage = function(e){
             msg_body.innerHTML += message_ele
         }
     }
-
-
-
+    msg_body.scrollTop = msg_body.scrollHeight;
 }
 
 function msg_send(){
     console.log("click to send")
 
-    if (group_id){
-        console.log("send to grp")
-        ws.send(JSON.stringify({
-            'message_to' : 'group',
-            'message': input_message.value,
-            'sender' : first_user,
-        }))
+    if (input_message.value === ""){
+        return;
     } else {
-        console.log("send to chat")
-        console.log("first_user: ",first_user)
-        console.log("second_user: ",second_user)
-        
-        ws.send(JSON.stringify({
-            'message_to' : 'chat',
-            'message' : input_message.value,
-            'sent_by' : first_user,
-            'send_to' : second_user,
-        }))
-    }
-    input_message.value = ""
-   
+        if (group_id){
+            console.log("send to grp")
+            ws.send(JSON.stringify({
+                'message_to' : 'group',
+                'message': input_message.value,
+                'sender' : first_user,
+            }))
+        } else {
+            console.log("send to chat")
+            console.log("first_user: ",first_user)
+            console.log("second_user: ",second_user)
+            
+            ws.send(JSON.stringify({
+                'message_to' : 'chat',
+                'message' : input_message.value,
+                'sent_by' : first_user,
+                'send_to' : second_user,
+            }))
+        }
+        input_message.value = ""
+    }   
 }
 
 function search_user(){
@@ -143,6 +144,10 @@ function verifyOtp(value){
     console.log(value, "clicked to verify otp")
     var phone = document.getElementById("phone").value
     var otp = document.getElementById("otp").value
+
+    var msgblock = document.getElementById("msg")
+    msgblock.innerHTML = '';
+
     $.ajax({
         url: '/verifyOtp/',
         type: 'POST',
@@ -153,7 +158,6 @@ function verifyOtp(value){
         },
         success: function(response){
             if (response.msg === 'OTP has been expired!' || response.msg === 'Invalid OTP!'){
-                var msgblock = document.getElementById("msg")
                 var msg = document.createElement('h5')
                 msg.textContent = response.msg
                 msgblock.appendChild(msg)

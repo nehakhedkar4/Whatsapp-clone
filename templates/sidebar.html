@@ -57,7 +57,7 @@
                     
             </div>
                 
-            <div class="shadow bg-white" style="height: 35.5rem;">
+            <div class="shadow bg-white" style="height: 35.5rem; overflow-y: scroll;">
                 {% for i in conversation %}
                     {% if i.second_user.id != logged_in_user.id %}
                     <a href="{% url 'chat' i.id %}" style="text-decoration: none;">
@@ -112,7 +112,7 @@
                                         {% if g.group_icon %}
                                             <img src="{{ g.group_icon.url }}" class="profile_img m-3" alt="...">
                                         {% else %}
-                                            <span class="group-profile m-3"><i class="fa-solid fa-people-group"></i></span>
+                                            <span class="group-profile m-3"><i class="fa-solid fa-user-group"></i></span>
                                         {% endif %}
                                     </div>
                                 <div class="col-md-8">
@@ -252,8 +252,9 @@ input:focus {
     cursor: pointer;
 }
 .group-profile{
-    background-color: #757575;
-    padding: 13px 17px 17px 17px;
+    background-color: #d1d7db;
+    color: white;
+    padding: 13px 15px;
     border-radius: 50%;
     display:block;
     width:50px;

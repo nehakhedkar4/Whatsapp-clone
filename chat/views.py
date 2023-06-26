@@ -9,6 +9,7 @@ from django.contrib import messages
 import datetime
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+import json
 
 load_dotenv()
 
@@ -122,7 +123,7 @@ def whatsappFun(request):
     else:
         redirect('/')
 
-import json
+
 def newFun(request, id=None, username=None):
 
     if request.method == 'POST':
@@ -214,7 +215,6 @@ def newFun(request, id=None, username=None):
             'chat_user': chat_user,
             'all_users' : all_users,
             'groups' : groups,
-            
         })   
 
     if id != None and '/group' in request.path:
@@ -334,3 +334,10 @@ def chatfunct(request):
 
         return redirect('/chat/')
     
+
+print()
+group_messages = Group.objects.get(id=6)
+
+print(group_messages.group_members.all())
+print(len(group_messages.group_members.all()))
+print()

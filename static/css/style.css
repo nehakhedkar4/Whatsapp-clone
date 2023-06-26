@@ -9,6 +9,13 @@
     width:50px;
     height:50px;
 }
+.add-participant-icon{
+    background-color: #00a884;
+    padding: 16px 17px;
+    border-radius: 50%;
+    width:50px;
+    height:50px;
+}
 .profile_img{
     width:50px;
     height:50px;
@@ -63,4 +70,14 @@
     display:block;
     width:50px;
     height:50px;
+}
+.grp-usercard:hover{
+    background-color: #f1f1f1;
+}
+.grp-user-dropdown{
+    display: none;
+    float: right;
+}
+.grp-usercard:hover .grp-user-dropdown{
+    display: block;
 }
