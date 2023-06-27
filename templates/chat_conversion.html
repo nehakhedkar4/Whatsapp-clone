@@ -3,7 +3,6 @@
 {% block title %}Chat{% endblock title%}
 {% block content %} 
 
-
 <!-- CHAT CONVERSION -->
 {% if chat_user  or  group_obj %}
     <div class="col-8 p-0" id="chat-conversion-block">
@@ -39,13 +38,14 @@
                         
                         <input type="hidden" id="group-id" value="{{group_obj.id}}">
                         {% if group_obj.group_icon %}
-                            <img src="{{ group_obj.group_icon.url }}" class="profile_img" alt="...">
+                            <img src="{{ group_obj.group_icon.url }}" class="profile_img" alt="..." id="group-profile">
                         {% else %}
                             <span class="group-profile"><i class="fa-solid fa-user-group"></i></span>
+                            <img src="" class="d-none" id="group-profile">
                         {% endif %}
                     
                         <div class="ms-3 mt-1 d-flex flex-column">
-                            <span class="fw-bold">{{group_obj.group_name}}</span> 
+                            <span class="fw-bold" id="grpName-chat">{{group_obj.group_name}}</span> 
                             <small style="font-size: 13px; color: gray; font-family: 'Times New Roman', Times, serif;">tap here for group info.. </small>   
                         </div>
                     </div>
@@ -151,24 +151,32 @@
             <div class="d-flex justify-content-center">
                 <div class="m-4">
                     {% if group_obj.group_icon %}
-                        <label for="grpIcon" style="cursor: pointer;">
-                            <img src="{{ group_obj.group_icon.url }}" class="group-icon-img" id="group-img">
+                        <label for="grpIcon1" style="cursor: pointer;">
+                            <img src="{{ group_obj.group_icon.url }}" class="group-icon-img" id="group-img-preview">
                         </label>
-                        <input type="file" id="grpIcon" class="d-none">
+                        <input type="file" id="grpIcon1" class="d-none" onchange="ChangeGroupIcon()">
                     {% else %}
-                        <div class="" id="pre-group-icon">
-                            <label for="grpIcon" class="group-icon text-white d-flex flex-column">
+                        <div class="" id="pre-group-icon1">
+                            <label for="grpIcon1" class="group-icon text-white d-flex flex-column">
                                 <span class="d-flex justify-content-center"><i class="fa-2x fa-solid fa-camera"></i></span>
                                 <span class="text-center mt-2">ADD GROUP ICON</span>
                             </label>
-                            <input type="file" id="grpIcon" class="d-none">
+                            <input type="file" id="grpIcon1" class="d-none" onchange="ChangeGroupIcon()">
                         </div>
+                        <img src="" class="d-none group-icon-img" id="group-img-preview">
                     {% endif %}
                 </div>
             </div>
-            <div class="d-flex justify-content-center">
-                <h4 style="font-family: sans-serif;">{{ group_obj.group_name }}</h4>
-                <div class="ps-3 text-secondary"><i class="fa-solid fa-pen"></i></div><br>
+            <div class="d-flex justify-content-center" id="group-nameBlock">
+                <h4 id="group-name" class="grpName_{{group_obj.id}}" style="font-family: sans-serif;">{{ group_obj.group_name }}</h4>
+                <div class="ps-3 text-secondary"><i style="cursor: pointer;" class="fa-solid fa-pen" onclick="renameGroupName()"></i></div><br>
+            </div>
+            <div class="mx-4 my-2 d-flex group-name d-none" id="group-rename-block">
+                <div class="py-2 flex-grow-1">
+                    <input id="rename-group-name" class="border-0 mb-1" type="text" style="font-family: 'Times New Roman', Times, serif;">
+                </div>
+                <div class="p-2"><i class="fa-regular fa-face-smile" style="font-size: 22px;"></i></div>
+                <div style="cursor: pointer;" class="p-1" onclick="UpdateGroupName()"><i class="fa-solid fa-check fs-5 mt-1"></i></div>
             </div>
             <div class="text-center text-secondary" style="font-family: auto">Group - {{ group_obj.group_members.all|length }} participants</div>
         </div>
@@ -195,7 +203,7 @@
         </div>
         <div class="bg-white p-3 my-2" style="font-family: none;">
             <div class="text-secondary">{{ group_obj.group_members.all|length }} participants</div>
-            <div class="d-flex mt-2 align-items-center">
+            <div class="d-flex mt-2 align-items-center" data-bs-toggle="modal" data-bs-target="#exampleModal" style="cursor: pointer;">
                 <div class="p-2 text-white"><i class="fa-solid fa-user-plus add-participant-icon"></i></div>
                 <div class="p-2">Add participant</div>
             </div>
@@ -258,5 +266,47 @@
       {% endif %}
     </div>
 
+    <!-- Add participants -->  
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="">
+                    <div class="d-flex text-white" style="background-color: #008069;">
+                        <div class="p-4">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <span class="p-2" style="font-family: auto; font-size: larger;">Add participant</span>
+                        </div>
+                    </div>
+                    <div class="p-2 border-bottom">
+                        <input id="search_user" type="text" class="form-control border-start-0 rounded-0" placeholder="Search or start a new chat" style="font-family: fangsong; background-color: #f0f2f5;">
+                    </div>
+                    <div class="" style="font-family: none;">
+                        <div class="d-flex">
+                            <!-- <div class="m-2">
+                                <div class="text-white profile m-2 mb-0"><span class="profile_img">N</span></div>
+                                <div class="d-flex justify-content-center">Neha</div>
+                            </div> -->
+                        </div>
+                        <div class="p-3 border-bottom">
+                            <div class="text-success">CONTACTS</div>
+                        </div>
+                        <div class="">
+                            <div class="d-flex m-3">
+                                <div class="p-2 d-flex align-items-center"><input type="checkbox" name="" id=""></div>
+                                <div class="text-white profile m-2"><span class="profile_img">N</span></div>
+                                <div class="p-2 d-flex flex-column border-bottom w-100">
+                                    <span>Neha</span>
+                                    <span class="text-secondary">Status</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End of participants -->
 
+    <script src="{% static 'js/chat_conversion.js' %}"></script>
 {% endblock content %} 

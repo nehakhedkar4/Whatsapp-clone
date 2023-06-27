@@ -68,12 +68,14 @@ class Group(models.Model):
     group_name = models.CharField(max_length=255)
     group_icon = models.ImageField(upload_to='group_icons',null=True,blank=True)
     group_members = models.ManyToManyField(MyUser,related_name='groups')
+    group_admin = models.ManyToManyField(MyUser,related_name='group_admins')
     created_at = models.DateTimeField(auto_now_add=True)
 
 class GroupChat(models.Model):
     group_name = models.ForeignKey(Group,on_delete=models.CASCADE)
     sender = models.ForeignKey(MyUser,on_delete=models.CASCADE)
     message = models.TextField()
+    starred = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

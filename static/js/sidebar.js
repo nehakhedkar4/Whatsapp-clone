@@ -80,7 +80,6 @@ function addGroupIcon(){
     groupImgElement.setAttribute('src', URL.createObjectURL(group_img))
     groupImgElement.classList.remove('d-none')
     groupIconBlock.classList.add('d-none')
-
 }
 
 function createGroup() {

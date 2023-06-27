@@ -198,6 +198,92 @@ function changeImage(value){
         error: function(error){
             console.log("error:  ",error)
         }
+    })
+}
+console.log("-----------?",document.getElementById(`grp_profile_${group_id.value}`))
+function ChangeGroupIcon(){
 
+    var groupIconBlock = document.getElementById('pre-group-icon1')
+    var group_img = document.getElementById('grpIcon1').files[0]
+    var groupImgElement = document.getElementById('group-img-preview')
+    var sidebar_profile = document.getElementById(`grp_profile_${group_id.value}`)
+    console.log("group_id: ",group_id)
+
+    var formdata = new FormData();
+    formdata.append('action', 'Update-Group-Icon')
+    formdata.append('group_icon', group_img)
+    formdata.append('group_id', group_id.value)
+    $.ajax({
+        url: '/chat/',
+        type: 'POST',
+        data: formdata,
+        processData: false,
+        contentType: false,
+        headers: {
+            'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val() 
+        },
+        success: function(response){
+            console.log("success")
+            if (response.status === 200){
+                if (groupIconBlock !== null) {
+                    groupImgElement.setAttribute('src', response.image_url)
+                    document.getElementById('group-profile').setAttribute('src', response.image_url)
+                    document.getElementById('group-profile').classList.remove('d-none')
+                    sidebar_profile.setAttribute('src', response.image_url)
+                    groupIconBlock.classList.add('d-none')
+                } else {
+                    groupImgElement.setAttribute('src', response.image_url)
+                    document.getElementById('group-profile').setAttribute('src', response.image_url)
+                    document.getElementById('group-profile').classList.remove('d-none')
+                    sidebar_profile.setAttribute('src', response.image_url)
+                    sidebar_profile.classList.remove('d-none')
+                }
+            }
+        },
+        error: function(error){
+            console.log("error:  ",error)
+        }
+    })
+} 
+var group_name = document.getElementById('group-name')
+var grp_rename_block = document.getElementById('group-rename-block')
+var grp_name_block = document.getElementById('group-nameBlock')
+var new_group_name = document.getElementById('rename-group-name')
+
+function renameGroupName(){
+    console.log("clickeed to rename")
+    new_group_name.value = group_name.textContent
+    grp_rename_block.classList.remove('d-none')
+    grp_name_block.classList.add('d-none')
+}
+
+
+function UpdateGroupName(){
+    // grpName_{{g.id}}
+    console.log("clicked update name button","==new_group_name", new_group_name.value)
+    $.ajax({
+        url: '/chat/',
+        type: 'POST',
+        data: {
+            action : 'Rename-Group-Name',
+            group_id : group_id.value,
+            new_grp_name : new_group_name.value
+        },
+        headers: {
+            'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val() 
+        },
+        success : function(response) {
+            console.log("updated successfully",response);
+            if (response.status == 200){
+                group_name.textContent = response.group_name
+                document.getElementById('grpName-chat').textContent = response.group_name
+                document.getElementById(`sidebar_grpName_${group_id.value}`).textContent = response.group_name
+                grp_rename_block.classList.add('d-none')
+                grp_name_block.classList.remove('d-none')
+            }
+        },
+        error: function(error){
+            console.log("ERROR: ",error)
+        }
     })
 }

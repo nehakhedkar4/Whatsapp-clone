@@ -145,6 +145,31 @@ def newFun(request, id=None, username=None):
             
             return  JsonResponse({'status' : 200})
 
+        if request.POST.get('action') == 'Update-Group-Icon':
+            group_img = request.FILES.get('group_icon')
+            group_id = request.POST.get('group_id')
+            # print('group_id: ', json.loads(group_id))
+            print("request.POST.get('group_id'):", type(request.POST.get('group_id')))
+            group_inst = Group.objects.get(id=int(group_id))
+            group_inst.group_icon = group_img
+            group_inst.save()
+            icon_url = group_inst.group_icon.url
+            return JsonResponse({
+                'status' : 200,
+                'image_url' : icon_url
+                })
+        
+        if request.POST.get('action') == 'Rename-Group-Name':
+            gr_inst = Group.objects.get(id=int(request.POST.get('group_id')))
+            gr_inst.group_name = request.POST.get('new_grp_name')
+            gr_inst.save()
+            group_name_new = gr_inst.group_name
+            return JsonResponse({
+                'status' : 200,
+                'group_name' : group_name_new
+            })
+
+
         img = request.FILES.get('img')
         user_id = request.POST.get('user_id')
         
@@ -239,8 +264,6 @@ def newFun(request, id=None, username=None):
         'groups' : groups,
     })
 
-
-
 def chatfunct(request):
 
     if request.method == 'GET':
@@ -333,11 +356,3 @@ def chatfunct(request):
             return JsonResponse({'image_url' : image_url})
 
         return redirect('/chat/')
-    
-
-print()
-group_messages = Group.objects.get(id=6)
-
-print(group_messages.group_members.all())
-print(len(group_messages.group_members.all()))
-print()

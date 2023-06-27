@@ -1,6 +1,7 @@
 {% load static %}
 
 <script src="{% static 'js/sidebar.js' %}"></script>
+<script src="{% static 'js/chat_conversion.js' %}"></script>
 
 <div class="container-fluid">
     <div class="d-flex justify-content-end">
@@ -110,14 +111,15 @@
                                 <div class="row g-0">
                                     <div class="col-md-2">
                                         {% if g.group_icon %}
-                                            <img src="{{ g.group_icon.url }}" class="profile_img m-3" alt="...">
+                                            <img src="{{ g.group_icon.url }}" class="profile_img m-3" alt="..." id="grp_profile_{{g.id}}">
                                         {% else %}
                                             <span class="group-profile m-3"><i class="fa-solid fa-user-group"></i></span>
+                                            <img src="" class="profile_img m-3 d-none" alt="..." id="grp_profile_{{g.id}}">
                                         {% endif %}
                                     </div>
                                 <div class="col-md-8">
                                     <div class="card-body">
-                                        <h5 class="card-title" style="font-family: auto;">{{g.group_name}}</h5>
+                                        <h5 class="card-title" id="sidebar_grpName_{{g.id}}" style="font-family: auto;">{{g.group_name}}</h5>
                                         <!-- <p class="card-text" style="font-family: sans-serif;"><small class="text-muted">Ne</small></p> -->
                                     </div>
                                 </div>
@@ -275,4 +277,4 @@ input:focus {
         }
     })
 
-</script>
+</script> 
