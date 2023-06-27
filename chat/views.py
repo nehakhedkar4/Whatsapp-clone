@@ -247,6 +247,9 @@ def newFun(request, id=None, username=None):
 
         group_messages = GroupChat.objects.filter(group_name=group_obj)
 
+        users_not_in_group = MyUser.objects.exclude(groups=group_obj)
+        print('users_not_in_group: ', users_not_in_group)
+
         return render(request, 'chat_conversion.html', {
             'group_obj' : group_obj,
             'logged_in_user': logged_in_user,
@@ -254,6 +257,7 @@ def newFun(request, id=None, username=None):
             'all_users' : all_users,
             'groups' : groups,
             'group_messages' : group_messages,
+            'users_not_in_group' : users_not_in_group,
         })
 
 
@@ -356,3 +360,11 @@ def chatfunct(request):
             return JsonResponse({'image_url' : image_url})
 
         return redirect('/chat/')
+
+
+g = Group.objects.get(id=7)
+print('g: ', g.group_name)
+
+
+users_not_in_group = MyUser.objects.exclude(groups=g)
+print('users_not_in_group: ', users_not_in_group)

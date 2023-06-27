@@ -2,16 +2,15 @@ console.log("chat_conversion.js loaded")
 
 var ws;
 var second_user;
+var addingMembersForGrp = [];
 
 first_user = document.getElementById('first_user').value
-console.log("first_user: ",first_user)
+// console.log("first_user: ",first_user)
 
 var group_id = document.getElementById('group-id')
-console.log(group_id,":group_id")
+// console.log(group_id,":group_id")
 
 var input_message = document.getElementById('input-message')
-// var first_user = document.getElementById('first_user').value
-// var second_user = document.getElementById('second-user').value
 var msg_body = document.querySelector('.message-body')
 msg_body.scrollTop = msg_body.scrollHeight;
 
@@ -200,7 +199,7 @@ function changeImage(value){
         }
     })
 }
-console.log("-----------?",document.getElementById(`grp_profile_${group_id.value}`))
+
 function ChangeGroupIcon(){
 
     var groupIconBlock = document.getElementById('pre-group-icon1')
@@ -286,4 +285,48 @@ function UpdateGroupName(){
             console.log("ERROR: ",error)
         }
     })
+}
+
+function addingTOGrp(checkbox) {
+    const userDiv = checkbox.parentNode.parentNode;
+    const selectedUsersDiv = document.getElementById("adding-users");
+    const username = userDiv.querySelector('.username-for-group').textContent;
+    const profile = userDiv.querySelector('.profile_img');
+    const userId = userDiv.getAttribute('data-user-id');
+
+    if (checkbox.checked) {
+        if (selectedUsersDiv.querySelector(`.adding-to-group-${userId}`) === null) {
+            let userElement = '';
+            if (profile.tagName === 'IMG') {
+                const img_url = profile.getAttribute('src');
+                userElement = `
+                    <div class="m-2 adding-to-group adding-to-group-${userId}">
+                        <img src="${img_url}" class="profile_img m-2" alt="...">
+                        <div class="d-flex justify-content-center">${username}</div>
+                    </div>`;
+            } else {
+                userElement = `
+                    <div class="m-2 adding-to-group adding-to-group-${userId}">
+                        <div class="text-white profile m-2"><span class="profile_img">N</span></div>
+                        <div class="d-flex justify-content-center">${username}</div>
+                    </div>`;
+            }
+            selectedUsersDiv.insertAdjacentHTML('beforeend', userElement);
+            addingMembersForGrp.push(parseInt(userId))
+        }
+    } else {
+        const userToRemove = selectedUsersDiv.querySelector(`.adding-to-group-${userId}`);
+        if (userToRemove !== null) {
+            var index = addingMembersForGrp.indexOf(parseInt(userId));
+            if (index > -1) {
+                addingMembersForGrp.splice(index, 1);
+            }
+            userToRemove.remove();
+        }
+    }
+
+    var addUserBlock = document.getElementById('add-user');
+    const selectedUsers = selectedUsersDiv.querySelectorAll('.adding-to-group');
+    addUserBlock.style.display = (selectedUsers.length > 0) ? 'block' : 'none';
+    addUserBlock.classList.remove('d-none');
 }

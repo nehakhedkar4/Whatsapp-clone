@@ -81,3 +81,12 @@
 .grp-usercard:hover .grp-user-dropdown{
     display: block;
 }
+.checkblock1{
+    position: absolute;
+    right: 25px;
+    bottom: 15px;
+    background-color: #00a884;
+    border-radius: 50%;
+    padding: 13px 16px;
+    cursor: pointer;
+}
