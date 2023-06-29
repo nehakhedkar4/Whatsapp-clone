@@ -18,15 +18,10 @@ msg_body.scrollTop = msg_body.scrollHeight;
 // WEBSOCKET CONNECTION
 
 if (group_id){
-    console.log("inside if for group")
     ws = new WebSocket('ws://' + window.location.host + '/ws/async/group/' + group_id.value) 
-    console.log("ws: ",ws)
 } else {
-    console.log("else for chat ")
     second_user = document.getElementById('second-user').value
-    console.log("first_user: ",first_user, "second_user: ",second_user)
     ws = new WebSocket('ws://' + window.location.host + '/ws/async/' + first_user + '/' + second_user) 
-    console.log("ws: ",ws)
 }
 
 
@@ -246,9 +241,17 @@ function ChangeGroupIcon(){
 } 
 var group_name = document.getElementById('group-name')
 var grp_rename_block = document.getElementById('group-rename-block')
+var update_input_GD = document.getElementById('update-input-GD')
 var grp_name_block = document.getElementById('group-nameBlock')
+var add_Group_discrip = document.getElementById('add-Group-discrip')
 var new_group_name = document.getElementById('rename-group-name')
+var GD_from_BE = document.getElementById('GD-from-BE')
+var discription_input = document.getElementById('group-discription-name-input')
 
+if (GD_from_BE.textContent === ""){
+    add_Group_discrip.classList.remove('d-none')
+    document.getElementById('display-group-descrip').classList.add('d-none')
+}
 function renameGroupName(){
     console.log("clickeed to rename")
     new_group_name.value = group_name.textContent
@@ -256,6 +259,40 @@ function renameGroupName(){
     grp_name_block.classList.add('d-none')
 }
 
+function AddGroupDecrip(){
+    if (GD_from_BE.textContent !== ""){
+        discription_input.value = GD_from_BE.textContent 
+        document.getElementById('display-group-descrip').classList.add('d-none')
+        update_input_GD.classList.remove('d-none')
+    } else {
+        add_Group_discrip.classList.add('d-none')
+        update_input_GD.classList.remove('d-none')
+    }
+}
+
+function updateGroupDescrip(){
+    $.ajax({
+        url: '/chat/',
+        type: 'POST',
+        data: {
+            'action' : 'Update-Group-Description',
+            'group_id' : group_id.value,
+            'description' : discription_input.value,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function(response){
+            console.log("success")
+            if (response.group_description === ""){
+                add_Group_discrip.classList.remove('d-none')
+                update_input_GD.classList.add('d-none')
+            } else {
+                GD_from_BE.textContent = response.group_description
+                document.getElementById('display-group-descrip').classList.remove('d-none')
+                update_input_GD.classList.add('d-none')
+            }
+        }
+    })
+}
 
 function UpdateGroupName(){
     // grpName_{{g.id}}
@@ -264,9 +301,9 @@ function UpdateGroupName(){
         url: '/chat/',
         type: 'POST',
         data: {
-            action : 'Rename-Group-Name',
-            group_id : group_id.value,
-            new_grp_name : new_group_name.value
+            'action' : 'Rename-Group-Name',
+            'group_id' : group_id.value,
+            'new_grp_name' : new_group_name.value
         },
         headers: {
             'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val() 
@@ -274,11 +311,11 @@ function UpdateGroupName(){
         success : function(response) {
             console.log("updated successfully",response);
             if (response.status == 200){
+                grp_rename_block.classList.add('d-none')
+                grp_name_block.classList.remove('d-none')
                 group_name.textContent = response.group_name
                 document.getElementById('grpName-chat').textContent = response.group_name
                 document.getElementById(`sidebar_grpName_${group_id.value}`).textContent = response.group_name
-                grp_rename_block.classList.add('d-none')
-                grp_name_block.classList.remove('d-none')
             }
         },
         error: function(error){
@@ -329,4 +366,106 @@ function addingTOGrp(checkbox) {
     const selectedUsers = selectedUsersDiv.querySelectorAll('.adding-to-group');
     addUserBlock.style.display = (selectedUsers.length > 0) ? 'block' : 'none';
     addUserBlock.classList.remove('d-none');
+}
+
+function addToGroup(){
+    console.log("clocked to addToGroup", addingMembersForGrp)
+    $.ajax({
+        'url' : '/chat/',
+        type : 'POST',
+        data: {
+            'action' : 'add-members-to-group',
+            'group_id' : group_id.value,
+            'add_members' : JSON.stringify(addingMembersForGrp),
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function(response){
+            console.log("success")
+            window.location.reload()
+        },
+        error: function(error){
+            console.log("ERROR: ",error)
+        }
+    })
+}
+
+function exitGroup(){
+    var grp_name = document.getElementById('grpName-chat').textContent 
+    document.getElementById('exitGroupName').textContent = `Exit "${grp_name}" group?`
+}
+
+function confirmExitGrp(){
+    console.log("Confirm exit from group")
+    $.ajax({
+        url: '/chat/',
+        type: 'POST',
+        data: {
+            'action' : 'Exit-From-Group',
+            'group_id' : group_id.value,
+            'user' : first_user,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function(){
+            console.log("success")
+            window.location.reload()
+        },
+        error: function(error){
+            console.log("ERROR: ",error)
+        }
+    })
+}
+
+function makeGroupAdmin(memberID){
+    var grp_name = document.getElementById('grpName-chat').textContent 
+    var username = document.getElementById('member-username').textContent
+    document.getElementById('memberID').value =  memberID
+    document.getElementById('makeGroupAdmin').textContent = `Make ${username} an admin for "${grp_name}" group?`
+}
+
+function confirmMakeGroupAdmin(){
+    var member_id = document.getElementById('memberID').value
+    $.ajax({
+        url: '/chat/',
+        type: 'POST',
+        data: {
+            'action' : 'Make-Group-Admin',
+            'group_id' : group_id.value,
+            'member_id' : member_id,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success : function(){
+            console.log("success")
+            window.location.reload();
+        },
+        error: function(error){
+            console.log("ERROR: ",error)
+        }
+    })
+}
+function removeFromGroup(memberID){
+    var grp_name = document.getElementById('grpName-chat').textContent 
+    var username = document.getElementById('member-username').textContent
+    document.getElementById('remove-member-id').value =  memberID
+    document.getElementById('removeMemberFromGroup').textContent = `Remove ${username} from "${grp_name}" group?`
+}
+
+function confirmRemoveFromGroup(){
+    var member_id = document.getElementById('remove-member-id').value
+    $.ajax({
+        url: '/chat/',
+        type: 'POST',
+        data: {
+            'action' : 'Remove-Member-From-Group',
+            'group_id' : group_id.value,
+            'member_id' : member_id,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success : function(){
+            console.log("success")
+            window.location.reload();
+        },
+        error: function(error){
+            console.log("ERROR: ",error)
+        }
+    })
 }

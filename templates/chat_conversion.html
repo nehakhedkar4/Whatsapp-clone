@@ -51,7 +51,16 @@
                     </div>
                     <div class="p-2">
                         <span class="px-2"><i class="fa-solid fa-magnifying-glass"></i></span>
-                        <span class="px-2"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+                        <!-- <span class="px-2"><i class="fa-solid fa-ellipsis-vertical"></i></span> -->
+                        <div class="dropdownN">
+                            <button class="dropbtnN"><i
+                                    class="fa-solid fa-ellipsis-vertical"></i></button>
+                            <div class="dropdownN-contentN">
+                                <a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Group info</a>
+                                <a href="#">Clear messages</a>
+                                <a href="" data-bs-toggle="modal" data-bs-target="#exitGroup" onclick="exitGroup()">Exit group</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             {% endif %}
@@ -181,12 +190,26 @@
             <div class="text-center text-secondary" style="font-family: auto">Group - {{ group_obj.group_members.all|length }} participants</div>
         </div>
         <div class="bg-white p-3 my-2">
-            <div class="d-flex justify-content-between" style="font-family: 'Times New Roman', Times, serif;font-size: unset">
+            
+            <div class="d-flex justify-content-between" id="display-group-descrip">
+                <span id="GD-from-BE">{{ group_obj.group_description }}</span>
+                <span class="text-secondary" style="cursor: pointer;" onclick="AddGroupDecrip()"><i class="fa-solid fa-pen"></i></span>
+            </div>
+            <div class="d-flex justify-content-between d-none" style="font-family: 'Times New Roman', Times, serif;font-size: unset" id="add-Group-discrip">
                 <span style="color: #00a884;">Add group discription</span>
-                <span class="text-secondary"><i class="fa-solid fa-pen"></i></span>
+                <span class="text-secondary" style="cursor: pointer;" onclick="AddGroupDecrip()"><i class="fa-solid fa-pen"></i></span>
+            </div>
+            
+            <div class="mb-2 d-flex group-discription group-name d-none" id="update-input-GD">
+                <div class="flex-grow-1">
+                    <input id="group-discription-name-input" class="border-0" type="text" style="font-family: 'Times New Roman', Times, serif;">
+                </div>
+                <div class="p-2"><i class="fa-regular fa-face-smile" style="font-size: 22px;"></i></div>
+                <div style="cursor: pointer;" class="p-1" onclick="updateGroupDescrip()"><i class="fa-solid fa-check fs-5 mt-1"></i></div>
             </div>
             <div class="text-secondary mt-2" style="font-family: sans-serif; font-size: smaller">
-                Group created by {% if logged_in_user in group_obj.group_admin.all %}You{% else %}{{group_obj.group_admin.all.0.username}}{% endif %}, on 12/01/23 at 9:31 PM 
+                Group created by {% if logged_in_user in group_obj.group_admin.all %}You{% else %}{{group_obj.group_admin.all.0.username}}{% endif %}, 
+                on {{ group_obj.created_at|date:"d/m/y" }} at {{ group_obj.created_at|time:"g:i A" }}
             </div>
         </div>
         <div class="bg-white my-2 p-3" style="font-family: none;">
@@ -211,15 +234,15 @@
                     <div class="p-2">Add participant</div>
                 </div>
             {% endif %}
-            {% for group in group_obj.group_members.all %}
-                {% if group.id  == logged_in_user.id %}
+            {% for member in group_obj.group_members.all %}
+                {% if member.id  == logged_in_user.id %}
                     <div class="card border-0" style="max-width: 540px;cursor: pointer;">
                         <div class="row g-0">
                             <div class="col-md-2">
-                                {% if group.profile_picture %}
-                                    <img src="{{ group.profile_picture.url }}" class="profile_img m-2" alt="...">
+                                {% if member.profile_picture %}
+                                    <img src="{{ member.profile_picture.url }}" class="profile_img m-2" alt="...">
                                 {% else %}
-                                    <div class="text-white profile m-2"> <span class="profile_img">{{ group.username.0 }}</span> </div>
+                                    <div class="text-white profile m-2"> <span class="profile_img">{{ member.username.0 }}</span> </div>
                                 {% endif %}
                             </div>
                             <div class="col-md-10">
@@ -237,22 +260,26 @@
                     <div class="card border-0 {% if logged_in_user in group_obj.group_admin.all %}grp-usercard{% endif %}" style="max-width: 540px;cursor: pointer;">
                         <div class="row g-0">
                             <div class="col-md-2">
-                                {% if group.profile_picture %}
-                                    <img src="{{ group.profile_picture.url }}" class="profile_img m-2" alt="...">
+                                {% if member.profile_picture %}
+                                    <img src="{{ member.profile_picture.url }}" class="profile_img m-2" alt="...">
                                 {% else %}
-                                    <div class="text-white profile m-2"> <span class="profile_img">{{ group.username.0 }}</span> </div>
+                                    <div class="text-white profile m-2"> <span class="profile_img">{{ member.username.0 }}</span> </div>
                                 {% endif %}
                             </div>
                             <div class="col-md-10">
                                 <div class="card-body">
-                                    <div class="dropdownN grp-user-dropdown">
-                                        <button class="dropbtnN"><i class="fa-solid fa-angle-down"></i></button>
-                                        <div class="dropdownN-contentN">
-                                            <a href="#">Make group admin</a>
-                                            <a href="#">Remove</a>
+                                    {% if member in group_obj.group_admin.all %}
+                                        <small class="text-success p-1" style="background-color: #d2fae6; float: right;">Group admin</small>
+                                    {% else %}
+                                        <div class="dropdownN grp-user-dropdown">
+                                            <button class="dropbtnN"><i class="fa-solid fa-angle-down"></i></button>
+                                            <div class="dropdownN-contentN">
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#makeAdmin" onclick="makeGroupAdmin('{{member.id}}')">Make group admin</a>
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#removeFromGroup" onclick="removeFromGroup('{{member.id}}')">Remove</a>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <h6 class="card-title mb-0" style="font-family: auto;">{{ group.username }}</h6>
+                                    {% endif %}
+                                    <h6 class="card-title mb-0" style="font-family: auto;" id="member-username">{{ member.username }}</h6>
                                     <p class="card-text" style="font-family: sans-serif;"><small class="text-muted">Status</small></p>
                                 </div>
                             </div>
@@ -264,7 +291,7 @@
         <div class="bg-white p-3 mt-2 mb-4" style="font-family: 'Times New Roman', Times, serif; cursor: pointer;">
             <div class="d-flex text-danger fs-5">
                 <div class="p-2"><i class="fa-solid fa-right-from-bracket"></i></div>
-                <div class="p-2 fw-bold">Exit group</div>
+                <div class="p-2 fw-bold" data-bs-toggle="modal" data-bs-target="#exitGroup" onclick="exitGroup()">Exit group</div>
             </div>
         </div>
       </div>
@@ -284,7 +311,7 @@
                         </div>
                     </div>
                     <div class="p-2 border-bottom">
-                        <input id="search_user" type="text" class="form-control border-start-0 rounded-0" placeholder="Search or start a new chat" style="font-family: fangsong; background-color: #f0f2f5;">
+                        <input id="search_user" type="text" class="form-control border-start-0 rounded-0" placeholder="Search..." style="font-family: fangsong; background-color: #f0f2f5;">
                     </div>
                     <div class="" style="font-family: none;">
                         <div class="d-flex" id="adding-users">
@@ -313,7 +340,7 @@
                     </div>
                 </div>
                 <div class="d-none" id="add-user">
-                    <div class="text-white checkblock1">
+                    <div class="text-white checkblock1" onclick="addToGroup()">
                         <i class="fa-solid fa-check" style="font-size: 19px"></i>
                     </div>
                 </div>
@@ -321,6 +348,66 @@
         </div>
     </div>
     <!-- End of participants -->
+
+    <!-- Exit confirmation modal --> 
+  <div class="modal fade" id="exitGroup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exitGroupLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="p-2" style="font-family: 'Times New Roman', Times, serif;">
+            <h4 style="font-size: 1.25rem;" id="exitGroupName"></h4>
+            <div class="">
+                <div class="d-flex justify-content-end m-2">
+                    <button class="cancelbtn" data-bs-dismiss="modal">Cancel</button>
+                </div>
+                <div class="d-flex justify-content-end m-2">
+                    <button class="text-white exitbtn" onclick="confirmExitGrp()">Exit group</button>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <!-- End exit -->
+
+    <!-- Make Group admin modal --> 
+  <div class="modal fade" id="makeAdmin" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="makeAdminLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="p-2" style="font-family: 'Times New Roman', Times, serif;">
+            <input type="hidden" id="memberID">
+            <h4 style="font-size: 1.25rem;" id="makeGroupAdmin"></h4>
+            <div class="d-flex justify-content-end">
+                <button class="cancelbtn m-2" data-bs-dismiss="modal">Cancel</button>
+                <button class="text-white exitbtn m-2" onclick="confirmMakeGroupAdmin()">Make group admin</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <!-- End modal -->
+
+    <!-- Remove From Group modal --> 
+  <div class="modal fade" id="removeFromGroup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="removeFromGroupLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="p-2" style="font-family: 'Times New Roman', Times, serif;">
+            <input type="hidden" id="remove-member-id">
+            <h4 style="font-size: 1.25rem;" id="removeMemberFromGroup"></h4>
+            <div class="d-flex justify-content-end">
+                <button class="cancelbtn m-2" data-bs-dismiss="modal">Cancel</button>
+                <button class="text-white exitbtn m-2" onclick="confirmRemoveFromGroup()">Remove</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <!-- End modal -->
 
     <script src="{% static 'js/chat_conversion.js' %}"></script>
 {% endblock content %} 

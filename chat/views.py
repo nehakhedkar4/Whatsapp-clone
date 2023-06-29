@@ -148,8 +148,6 @@ def newFun(request, id=None, username=None):
         if request.POST.get('action') == 'Update-Group-Icon':
             group_img = request.FILES.get('group_icon')
             group_id = request.POST.get('group_id')
-            # print('group_id: ', json.loads(group_id))
-            print("request.POST.get('group_id'):", type(request.POST.get('group_id')))
             group_inst = Group.objects.get(id=int(group_id))
             group_inst.group_icon = group_img
             group_inst.save()
@@ -168,7 +166,52 @@ def newFun(request, id=None, username=None):
                 'status' : 200,
                 'group_name' : group_name_new
             })
+        
+        if request.POST.get('action') == 'Update-Group-Description':
+            gr_inst = Group.objects.get(id=int(request.POST.get('group_id')))
+            gr_inst.group_description = request.POST.get('description')
+            gr_inst.save()
+            group_description_new = gr_inst.group_description
+            return JsonResponse({
+                'status' : 200,
+                'group_description' : group_description_new
+            })
 
+        if request.POST.get('action') == 'add-members-to-group':
+            members_list = json.loads(request.POST.get('add_members'))
+            grp = Group.objects.get(id=int(request.POST.get('group_id')))
+            for member in members_list:
+                grp.group_members.add(MyUser.objects.get(id=member))
+            return JsonResponse({
+                'status' : 200
+            })
+
+        if request.POST.get('action') == 'Exit-From-Group':
+            grp = Group.objects.get(id=int(request.POST.get('group_id')))
+            grp.group_members.remove(MyUser.objects.get(id=int(request.POST.get('user'))))
+            return JsonResponse({
+                'status' : 200
+            })       
+
+        if request.POST.get('action') == 'Make-Group-Admin':
+            group_id = int(request.POST.get('group_id'))
+            member_id = int(request.POST.get('member_id'))
+            group = Group.objects.get(id=group_id)
+            member = MyUser.objects.get(id=member_id)
+            group.group_admin.add(member)
+            return JsonResponse({
+                'status': 200
+            })
+        
+        if request.POST.get('action') == 'Remove-Member-From-Group':
+            group_id = int(request.POST.get('group_id'))
+            member_id = int(request.POST.get('member_id'))
+            group = Group.objects.get(id=group_id)
+            member = MyUser.objects.get(id=member_id)
+            group.group_members.remove(member)
+            return JsonResponse({
+                'status': 200
+            })
 
         img = request.FILES.get('img')
         user_id = request.POST.get('user_id')
@@ -185,6 +228,8 @@ def newFun(request, id=None, username=None):
     if 'user' in request.session:
         logged_in_user = MyUser.objects.get(phone=request.session['user'])
         users = Thread.objects.filter(Q(first_user=logged_in_user) | Q(second_user=logged_in_user))
+    # else:
+    #     return redirect('/')
     
     all_users = MyUser.objects.all().exclude(id=logged_in_user.id)
 
@@ -193,7 +238,6 @@ def newFun(request, id=None, username=None):
     chat_user = ''
 
     if username != None and '/user' in request.path:
-        print("username: ",username)
         try: 
             second_user = MyUser.objects.get(username=username)
             chat_user = second_user
@@ -244,11 +288,11 @@ def newFun(request, id=None, username=None):
 
     if id != None and '/group' in request.path:
         group_obj = Group.objects.get(id=id)
+        print('group_obj: ', group_obj.group_description)
 
         group_messages = GroupChat.objects.filter(group_name=group_obj)
 
         users_not_in_group = MyUser.objects.exclude(groups=group_obj)
-        print('users_not_in_group: ', users_not_in_group)
 
         return render(request, 'chat_conversion.html', {
             'group_obj' : group_obj,
@@ -267,6 +311,7 @@ def newFun(request, id=None, username=None):
         'all_users' : all_users,
         'groups' : groups,
     })
+
 
 def chatfunct(request):
 
@@ -361,10 +406,3 @@ def chatfunct(request):
 
         return redirect('/chat/')
 
-
-g = Group.objects.get(id=7)
-print('g: ', g.group_name)
-
-
-users_not_in_group = MyUser.objects.exclude(groups=g)
-print('users_not_in_group: ', users_not_in_group)

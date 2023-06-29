@@ -90,3 +90,16 @@
     padding: 13px 16px;
     cursor: pointer;
 }
+.cancelbtn{
+    color: #008069;
+    border-radius: 13px;
+    border: 1px solid #dee2e6;
+    padding: 6px 16px;
+    background-color: white
+}
+.exitbtn{
+    background-color: #008069; 
+    border-radius: 13px;
+    border: 1px solid #dee2e6;
+    padding: 6px 16px;
+}

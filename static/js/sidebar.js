@@ -5,7 +5,6 @@ var memberIDs = []
 var group_img;
 
 function addToGrp(userId){
-    console.log("click addToGrp",userId)
     
     var selectUser = document.getElementById('selectUser') 
     var userElement = document.querySelector(`[data-user-id="${userId}"]`);
@@ -19,7 +18,6 @@ function addToGrp(userId){
     var profileImage = userElement.querySelector('.profile_img');
 
     if (profileImage.tagName === 'IMG') {
-        console.log("Image")
         var profileUrl = profileImage.getAttribute('src')
         const userBlock = `<div class="d-flex flex-row p-2 mt-2" style="background-color: #f0f2f5; border-radius: 36px;" id="selectUserID-${userId}">
                             <img src="${profileUrl}" class="" alt="..." style="width:40px; height:40px; border-radius: 50%;">
@@ -28,7 +26,6 @@ function addToGrp(userId){
                         </div>`
         selectUser.insertAdjacentHTML('beforeend', userBlock)
     } else {
-        console.log("else div")
         const userBlock = `<div class="d-flex flex-row p-2 mt-2" style="background-color: #f0f2f5; border-radius: 36px;" id="selectUserID-${userId}">
                             <div class="selectedUserP text-white">${username[0]}</div>
                             <div class="p-2">${username}</div>
@@ -41,18 +38,11 @@ function addToGrp(userId){
 }
 
 function removeFromGrp(userId){
-    // console.log("Remove userid: ",userId)
-    // console.log("type of userId: ",userId, typeof(userId))
-    // console.log("type of userId: ",memberIDs[0], typeof(memberIDs[0]))
     var selectedGrpUsers = document.getElementById(`selectUserID-${userId}`)
-    // console.log(memberIDs,"================memberIDs before remove")
-    // console.log(memberIDs.indexOf(userId),"===MMMM")
     var index = memberIDs.indexOf(userId);
-    console.log(index,"=============index")
     if (index > -1) {
         memberIDs.splice(index, 1);
     }
-    // console.log(memberIDs,"================memberIDs After remove")
     selectedGrpUsers.remove();
     updateNextStep();
 }
@@ -69,8 +59,6 @@ function updateNextStep(){
 
 
 function addGroupIcon(){
-    console.log("inside      imgggggggg")
-
     var groupIconBlock = document.getElementById('pre-group-icon')
     var groupImgElement = document.getElementById('group-img')
 
@@ -81,11 +69,6 @@ function addGroupIcon(){
 }
 
 function createGroup() {
-    console.log("create group");
-    console.log(memberIDs, "======members");
-    console.log(inputGrpName.value, "========group_name");
-    console.log(group_img, "=========group icon");
-
     var formdata = new FormData();
     if (group_img) {
         formdata.append('img', group_img);
