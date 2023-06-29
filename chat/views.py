@@ -133,11 +133,12 @@ def newFun(request, id=None, username=None):
             member_ids = json.loads(request.POST.get('memberIDs'))
             group_name = request.POST.get('grpName')
             group_icon = request.FILES.get('img')
+            group_admin = MyUser.objects.get(phone=request.session['user'])
 
             if group_icon != None:
-                group = Group.objects.create(group_name=group_name,group_icon=group_icon)
+                group = Group.objects.create(group_name=group_name,group_icon=group_icon,group_admin=group_admin)
             else:
-                group = Group.objects.create(group_name=group_name)
+                group = Group.objects.create(group_name=group_name,group_admin=group_admin)
             
             group.group_members.add(MyUser.objects.get(phone=request.session['user']))
             for i in member_ids:

@@ -66,7 +66,7 @@ class ChatMessage(models.Model):
 
 class Group(models.Model):
     group_name = models.CharField(max_length=255)
-    group_description = models.CharField(max_length=255,null=True,blank=True)
+    group_description = models.CharField(max_length=255,null=True,blank=True,default="")
     group_icon = models.ImageField(upload_to='group_icons',null=True,blank=True)
     group_members = models.ManyToManyField(MyUser,related_name='groups')
     group_admin = models.ManyToManyField(MyUser,related_name='group_admins')
